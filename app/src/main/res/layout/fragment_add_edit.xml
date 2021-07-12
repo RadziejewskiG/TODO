@@ -1,0 +1,139 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    xmlns:tools="http://schemas.android.com/tools"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/container"
+    android:background="?attr/colorSurface"
+    android:paddingStart="@dimen/dp16"
+    android:paddingEnd="@dimen/dp16">
+
+    <com.google.android.material.button.MaterialButton
+        android:id="@+id/btnSave"
+        style="@style/TextButtonStylePrimary"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="@dimen/dp3"
+        android:paddingStart="@dimen/dp20"
+        android:paddingEnd="@dimen/dp20"
+        android:paddingTop="@dimen/dp8"
+        android:paddingBottom="@dimen/dp8"
+        android:textSize="16sp"
+        android:text="@string/save"
+        android:enabled="false"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintBottom_toBottomOf="@id/titleTv"/>
+
+    <TextView
+        android:id="@+id/titleTv"
+        style="@style/MaterialTextViewStyleMediumTitle"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/dp16"
+        android:layout_marginEnd="@dimen/dp16"
+        android:textSize="32sp"
+        tools:text="@string/add_task"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toStartOf="@+id/btnSave"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <com.google.android.material.textfield.TextInputLayout
+        android:id="@+id/tilTitle"
+        style="@style/InputLayout"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/dp24"
+        android:hint="@string/title"
+        app:errorEnabled="true"
+        app:counterEnabled="true"
+        app:counterMaxLength="30"
+        app:layout_constraintTop_toBottomOf="@+id/titleTv"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent">
+        <com.google.android.material.textfield.TextInputEditText
+            android:id="@+id/etTitle"
+            style="@style/InputEditText"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"/>
+    </com.google.android.material.textfield.TextInputLayout>
+
+    <ImageView
+        android:id="@+id/btnMakePhoto"
+        android:layout_width="@dimen/dp32"
+        android:layout_height="@dimen/dp32"
+        android:padding="@dimen/dp4"
+        android:background="@drawable/ripple_circle"
+        android:src="@drawable/ic_camera"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="@+id/taskIcon"
+        app:layout_constraintBottom_toTopOf="@+id/taskIcon"
+        app:tint="?attr/colorPrimary" />
+
+    <ImageView
+        android:id="@+id/btnSelectPhoto"
+        android:layout_width="@dimen/dp32"
+        android:layout_height="@dimen/dp32"
+        android:padding="@dimen/dp4"
+        android:background="@drawable/ripple_circle"
+        android:src="@drawable/ic_image"
+        app:layout_constraintBottom_toBottomOf="@+id/taskIcon"
+        app:layout_constraintTop_toBottomOf="@id/taskIcon"
+        app:layout_constraintStart_toStartOf="parent"
+        app:tint="?attr/colorPrimary" />
+
+    <ImageView
+        android:id="@+id/taskIcon"
+        android:layout_width="@dimen/dp64"
+        android:layout_height="@dimen/dp64"
+        android:layout_marginStart="@dimen/dp12"
+        android:layout_marginTop="@dimen/dp30"
+        tools:background="@color/gray"
+        app:layout_constraintTop_toBottomOf="@+id/tilTitle"
+        app:layout_constraintStart_toEndOf="@id/btnMakePhoto"/>
+
+    <com.google.android.material.textfield.TextInputLayout
+        android:id="@+id/tilIcon"
+        style="@style/InputLayout"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="@dimen/dp16"
+        android:layout_marginBottom="@dimen/dp6"
+        android:hint="@string/icon_url"
+        app:layout_constraintTop_toTopOf="@+id/taskIcon"
+        app:layout_constraintBottom_toBottomOf="@id/taskIcon"
+        app:layout_constraintStart_toEndOf="@id/taskIcon"
+        app:layout_constraintEnd_toEndOf="parent">
+        <com.google.android.material.textfield.TextInputEditText
+            android:id="@+id/etIcon"
+            style="@style/InputEditText"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content" />
+    </com.google.android.material.textfield.TextInputLayout>
+
+    <com.google.android.material.textfield.TextInputLayout
+        android:id="@+id/tilDescription"
+        style="@style/InputLayout"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        app:layout_constrainedHeight="true"
+        android:layout_marginTop="@dimen/dp24"
+        android:layout_marginBottom="@dimen/dp24"
+        android:hint="@string/description"
+        app:counterEnabled="true"
+        app:counterMaxLength="200"
+        app:layout_constraintVertical_bias="0"
+        app:layout_constraintTop_toBottomOf="@+id/btnSelectPhoto"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent">
+        <com.google.android.material.textfield.TextInputEditText
+            android:id="@+id/etDescription"
+            style="@style/InputEditText"
+            android:inputType="text|textMultiLine|textCapSentences"
+            android:maxLines="8"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"/>
+    </com.google.android.material.textfield.TextInputLayout>
+
+</androidx.constraintlayout.widget.ConstraintLayout>

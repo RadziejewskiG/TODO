@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:id="@+id/content"
+    android:gravity="center"
+    android:orientation="vertical"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools">
+
+    <com.google.android.material.progressindicator.CircularProgressIndicator
+        android:id="@+id/progressBar"
+        android:layout_width="@dimen/dp24"
+        android:layout_height="@dimen/dp24"
+        android:layout_marginTop="@dimen/dp12"
+        android:indeterminate="true"
+        android:clickable="false"
+        app:indicatorColor="?attr/colorSecondary"
+        tools:indeterminate="false"
+        tools:progress="50"/>
+
+</LinearLayout>

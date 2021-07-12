@@ -1,0 +1,63 @@
+<resources>
+
+    <!--  TODO dark theme not set  -->
+
+    <style name="Theme.App" parent="Theme.MaterialComponents.NoActionBar">
+
+        <item name="colorPrimary">@color/blue</item>
+        <item name="colorPrimaryVariant">@color/blue_darker</item>
+        <item name="colorOnPrimary">@color/white</item>
+
+        <item name="colorSecondary">@color/beige</item>
+        <item name="colorSecondaryVariant">@color/green</item>
+        <item name="colorOnSecondary">@color/white</item>
+
+        <item name="colorSurface">@color/white</item>
+        <item name="colorOnSurface">@color/black_lighter</item>
+
+        <item name="android:colorBackground">@color/white</item>
+        <item name="colorOnBackground">?attr/colorOnSurface</item>
+
+        <item name="android:windowBackground">?attr/colorSurface</item>
+
+        <item name="android:textColor">?attr/colorOnSurface</item>
+        <item name="android:textColorHint">@color/black_lighter_alpha</item>
+
+        <item name="counterTextColor">?android:attr/textColorHint</item>
+
+        <item name="colorError">@color/red</item>
+        <item name="colorOnError">@color/white</item>
+
+        <item name="colorAccent">?attr/colorSecondary</item>
+
+        <item name="rippleColor">@color/gray_light</item>
+
+        <item name="snackbarStyle">@style/SnackbarStyle</item>
+
+        <item name="colorBackgroundFloating">@color/transparent</item>
+
+        <item name="android:windowLightStatusBar">true</item>
+        <item name="android:statusBarColor">@color/transparent</item>
+
+        <item name="android:navigationBarColor">@color/white</item>
+
+        <item name="android:windowContentTransitions">true</item>
+
+        <item name="fontFamily">@font/roboto_regular</item>
+        <item name="android:fontFamily">@font/roboto_regular</item>
+
+    </style>
+
+    <style name="Theme.App.Launcher">
+        <item name="android:windowBackground">@drawable/launch_screen</item>
+        <item name="android:statusBarColor">?attr/colorSurface</item>
+        <item name="android:windowLightStatusBar">true</item>
+    </style>
+
+    <style name="Theme.App.TranslucentStatus">
+        <item name="android:windowBackground">?attr/colorSurface</item>
+        <item name="android:statusBarColor">@color/transparent</item>
+        <item name="android:windowLightStatusBar">true</item>
+    </style>
+
+</resources>

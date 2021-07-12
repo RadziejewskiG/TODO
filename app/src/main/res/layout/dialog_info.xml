@@ -1,0 +1,109 @@
+<?xml version="1.0" encoding="utf-8"?>
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/dialogContainerView"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:layout_gravity="center"
+    android:minWidth="0dp"
+    android:minHeight="0dp"
+    tools:layout_marginStart="@dimen/dp24"
+    tools:layout_marginEnd="@dimen/dp24">
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/dialogRootView"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:minWidth="@dimen/dp200"
+        android:layout_gravity="center"
+        android:paddingTop="@dimen/dp18"
+        android:paddingBottom="@dimen/dp12"
+        android:backgroundTint="?attr/colorSurface"
+        android:background="@drawable/bg_rounded_10" >
+
+        <ImageView
+            android:id="@+id/ic"
+            android:layout_width="@dimen/dp23"
+            android:layout_height="@dimen/dp23"
+            android:layout_marginTop="@dimen/dp1_25"
+            android:layout_marginStart="@dimen/dp20"
+            tools:src="@drawable/ic_info"
+            android:visibility="gone"
+            tools:visibility="visible"
+            app:layout_constraintBottom_toBottomOf="@+id/titleTv"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="@+id/titleTv"
+            app:tint="?attr/colorSecondaryVariant" />
+
+        <com.google.android.material.textview.MaterialTextView
+            android:id="@+id/titleTv"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="@dimen/dp5"
+            android:layout_marginEnd="@dimen/dp20"
+            app:layout_goneMarginStart="@dimen/dp20"
+            android:textSize="22sp"
+            app:layout_constraintHorizontal_bias="0"
+            style="@style/MaterialTextViewStyleMedium"
+            tools:text="Title title title long enough"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintStart_toEndOf="@+id/ic"
+            app:layout_constraintEnd_toEndOf="parent"/>
+
+        <com.google.android.material.textview.MaterialTextView
+            android:id="@+id/messageTv"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/dp8"
+            android:layout_marginStart="@dimen/dp20"
+            android:layout_marginEnd="@dimen/dp20"
+            android:gravity="start"
+            android:lineSpacingExtra="@dimen/dp3"
+            android:minLines="2"
+            style="@style/MaterialTextViewStyle"
+            android:textSize="15sp"
+            android:textColor="@color/black_lighter_alpha_more"
+            tools:text="Message"
+            android:visibility="gone"
+            tools:visibility="visible"
+            app:layout_constraintTop_toBottomOf="@+id/titleTv"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"/>
+
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/btnOk"
+            style="@style/TextButtonStylePrimary"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginEnd="@dimen/dp12"
+            android:layout_marginTop="@dimen/dp24"
+            android:paddingStart="@dimen/dp20"
+            android:paddingEnd="@dimen/dp20"
+            android:paddingTop="@dimen/dp8"
+            android:paddingBottom="@dimen/dp8"
+            android:textSize="16sp"
+            tools:text="@string/ok"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/messageTv" />
+
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/btnCancel"
+            style="@style/TextButtonStyle"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="@dimen/dp12"
+            android:paddingStart="@dimen/dp20"
+            android:paddingTop="@dimen/dp8"
+            android:paddingEnd="@dimen/dp20"
+            android:paddingBottom="@dimen/dp8"
+            android:textSize="16sp"
+            android:textColor="@color/gray"
+            app:layout_constraintBottom_toBottomOf="@+id/btnOk"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="@+id/btnOk"
+            tools:text="@string/cancel" />
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
+</FrameLayout>

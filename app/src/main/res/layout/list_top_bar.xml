@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/content"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:background="?attr/colorSurface"
+    android:elevation="@dimen/dp4"
+    android:padding="@dimen/dp16">
+
+    <ImageView
+        android:id="@+id/icLogo"
+        android:layout_width="@dimen/dp48"
+        android:layout_height="@dimen/dp48"
+        android:src="@drawable/todo_logo"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintBottom_toBottomOf="parent"/>
+
+    <TextView
+        android:id="@+id/tvAppName"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="@dimen/dp2"
+        android:layout_marginEnd="@dimen/dp20"
+        android:layout_marginBottom="@dimen/dp3"
+        android:textSize="34sp"
+        android:includeFontPadding="false"
+        style="@style/MaterialTextViewStyleMediumTitle"
+        android:textColor="@color/gray_logo"
+        android:text="@string/app_name"
+        app:layout_constraintTop_toTopOf="@+id/icLogo"
+        app:layout_constraintBottom_toBottomOf="@id/icLogo"
+        app:layout_constraintStart_toEndOf="@+id/icLogo"/>
+
+    <ImageView
+        android:id="@+id/btnRefresh"
+        android:layout_width="@dimen/dp32"
+        android:layout_height="@dimen/dp32"
+        android:padding="@dimen/dp4"
+        android:background="@drawable/ripple_circle"
+        android:src="@drawable/ic_refresh"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="@+id/tvAppName"
+        app:layout_constraintBottom_toBottomOf="@id/tvAppName"
+        app:tint="?attr/colorOnSurface" />
+
+</androidx.constraintlayout.widget.ConstraintLayout>

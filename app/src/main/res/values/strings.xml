@@ -1,0 +1,84 @@
+<resources>
+    <string name="app_name">TODO</string>
+
+    <string name="accept">Accept</string>
+    <string name="cancel">Cancel</string>
+
+    <string name="ok">Ok</string>
+
+    <string name="select_a_photo">Select a photo</string>
+
+    <string name="take_a_photo_desc">&lt;- Take a photo</string>
+
+    <string name="title_empty_error">Title must not be empty</string>
+    <string name="title_too_long_error">Title is too long</string>
+    <string name="description_too_long_error">Description is too long</string>
+
+    <string name="yes">Yes</string>
+    <string name="no">No</string>
+
+    <string name="add">Add</string>
+
+    <string name="save">Save</string>
+
+    <string name="add_task">Add a task</string>
+
+    <string name="edit_task">Edit task</string>
+
+    <string name="loading">Loading</string>
+
+    <string name="nothing_to_do">There\'s nothing to do!</string>
+
+    <string name="title">Title</string>
+    <string name="description">Description</string>
+
+    <string name="icon_url">Icon url</string>
+
+    <string name="success">Success</string>
+    <string name="warning">Warning</string>
+
+    <string name="delete">Delete</string>
+
+    <string name="deleting_task_title">Delete task</string>
+    <string name="deleting_task_message">Are you sure you want to delete the task %1$s?</string>
+
+    <string name="discarding_changes_title">Discard changes</string>
+    <string name="discarding_changes_message">Are you sure you want to discard the changes?</string>
+
+    <string name="apply">Apply</string>
+    <string name="clear">Clear</string>
+
+    <string name="an_unknown_error_occurred">An unknown error has occurred</string>
+    <string name="an_unknown_storage_error_occurred">An unknown Firebase Storage error has occurred</string>
+    <string name="an_unknown_firestore_error_occurred">An unknown Firestore error has occurred</string>
+    <string name="error_check_internet_connection">Check the internet connection</string>
+    <string name="error_too_many_requests">Too many requests</string>
+    <string name="error_api_not_available">API not available</string>
+    <string name="error_document_already_exists">The document already exists</string>
+    <string name="error_document_not_found">The document has not been found</string>
+    <string name="error_storage_bucket_not_found">Firebase Storage bucket not found</string>
+
+    <string name="yesterday">Yesterday</string>
+
+    <string name="monday">Monday</string>
+    <string name="tuesday">Tuesday</string>
+    <string name="wednesday">Wednesday</string>
+    <string name="thursday">Thursday</string>
+    <string name="friday">Friday</string>
+    <string name="saturday">Saturday</string>
+    <string name="sunday">Sunday</string>
+
+    <string name="january_">jan</string>
+    <string name="february_">feb</string>
+    <string name="march_">mar</string>
+    <string name="april_">apr</string>
+    <string name="may_">may</string>
+    <string name="june_">jun</string>
+    <string name="july_">jul</string>
+    <string name="august_">aug</string>
+    <string name="september_">sep</string>
+    <string name="october_">oct</string>
+    <string name="november_">nov</string>
+    <string name="december_">dec</string>
+
+</resources>

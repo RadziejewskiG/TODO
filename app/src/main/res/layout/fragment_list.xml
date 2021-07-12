@@ -1,0 +1,106 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.coordinatorlayout.widget.CoordinatorLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/container"
+    android:background="@color/gray_surface_dark"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <LinearLayout
+        android:id="@+id/llTop"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="vertical">
+
+        <include
+            android:id="@+id/topBar"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            layout="@layout/list_top_bar"/>
+
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/rv"
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:paddingStart="@dimen/dp16"
+            android:paddingEnd="@dimen/dp16"
+            android:paddingTop="@dimen/dp16"
+            android:paddingBottom="@dimen/dp64"
+            android:layout_weight="1"
+            android:clipToPadding="false"
+            android:overScrollMode="never"
+            app:layout_anchor="@+id/topBar"
+            app:layout_anchorGravity="bottom"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
+    </LinearLayout>
+
+    <LinearLayout
+        android:id="@+id/emptyLl"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="@dimen/dp24"
+        android:layout_marginEnd="@dimen/dp24"
+        android:orientation="vertical"
+        android:gravity="center"
+        android:alpha="0"
+        tools:alpha="1f"
+        android:clickable="false"
+        android:focusable="false"
+        android:layout_gravity="center">
+        <ImageView
+            android:id="@+id/imvEmpty"
+            android:layout_width="@dimen/dp72"
+            android:layout_height="@dimen/dp72"
+            android:src="@drawable/ic_empty_list"
+            app:tint="?attr/colorSecondary" />
+        <com.google.android.material.textview.MaterialTextView
+            android:id="@+id/tvEmpty"
+            style="@style/MaterialTextViewStyleMediumTitle"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textColor="?attr/colorSecondary"
+            android:gravity="center"
+            android:text="@string/nothing_to_do"
+            android:textSize="24sp"
+            android:layout_gravity="center" />
+    </LinearLayout>
+
+    <com.google.android.material.progressindicator.CircularProgressIndicator
+        android:id="@+id/progressBar"
+        android:layout_width="@dimen/dp24"
+        android:layout_height="@dimen/dp24"
+        android:indeterminate="true"
+        android:clickable="false"
+        app:indicatorColor="?attr/colorSecondary"
+        android:visibility="gone"
+        tools:visibility="gone"
+        tools:indeterminate="false"
+        tools:progress="50"
+        android:layout_gravity="center"/>
+
+    <com.google.android.material.floatingactionbutton.FloatingActionButton
+        android:id="@+id/fab"
+        android:layout_width="@dimen/dp56"
+        android:layout_height="@dimen/dp56"
+        android:layout_marginEnd="@dimen/dp16"
+        android:layout_marginBottom="@dimen/dp16"
+        app:srcCompat="@drawable/ic_add"
+        app:tint="?attr/colorSurface"
+        app:fabCustomSize="@dimen/dp56"
+        app:maxImageSize="@dimen/dp32"
+        app:fabSize="normal"
+        app:elevation="@dimen/dp4"
+        app:pressedTranslationZ="@dimen/dp4"
+        app:borderWidth="0dp"
+        android:backgroundTint="?attr/colorPrimary"
+        app:rippleColor="@color/white_alpha_40"
+        android:contentDescription="@string/add"
+        android:layout_gravity="bottom|end"/>
+
+</androidx.coordinatorlayout.widget.CoordinatorLayout>

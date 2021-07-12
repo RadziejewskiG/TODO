@@ -1,0 +1,63 @@
+<?xml version="1.0" encoding="utf-8"?>
+<navigation xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/main_graph"
+    app:startDestination="@id/listFragment">
+
+    <fragment
+        android:id="@+id/listFragment"
+        android:name="com.radziejewskig.todo.feature.list.ListFragment"
+        android:label="ListFragment"
+        tools:layout="@layout/fragment_list">
+        <action
+            android:id="@+id/action_listFragment_to_addEditFragment"
+            app:destination="@id/addEditFragment"
+            app:enterAnim="@anim/slide_from_right"
+            app:exitAnim="@anim/slide_out_left"
+            app:popEnterAnim="@anim/slide_from_left"
+            app:popExitAnim="@anim/slide_out_right" />
+
+        <action
+            android:id="@+id/action_list_to_addedit_no_anim"
+            app:destination="@id/addEditFragment" />
+    </fragment>
+
+    <fragment
+        android:id="@+id/addEditFragment"
+        android:name="com.radziejewskig.todo.feature.addedit.AddEditFragment"
+        android:label="AddEditFragment"
+        tools:layout="@layout/fragment_add_edit">
+        <argument
+            android:name="task"
+            app:argType="com.radziejewskig.todo.data.model.Task"
+            app:nullable="true" />
+        <action
+            android:id="@+id/action_addEditFragment_to_takePhotoFragment"
+            app:destination="@id/takePhotoFragment"
+            app:enterAnim="@anim/slide_from_right"
+            app:exitAnim="@anim/slide_out_left"
+            app:popEnterAnim="@anim/slide_from_left"
+            app:popExitAnim="@anim/slide_out_right" />
+        <action
+            android:id="@+id/action_addEditFragment_to_selectPhotoFragment"
+            app:destination="@id/selectPhotoFragment"
+            app:enterAnim="@anim/slide_from_right"
+            app:exitAnim="@anim/slide_out_left"
+            app:popEnterAnim="@anim/slide_from_left"
+            app:popExitAnim="@anim/slide_out_right" />
+    </fragment>
+
+     <fragment
+        android:id="@+id/takePhotoFragment"
+        android:name="com.radziejewskig.todo.feature.takephoto.TakePhotoFragment"
+        android:label="TakePhotoFragment"
+        tools:layout="@layout/fragment_take_photo"/>
+
+    <fragment
+        android:id="@+id/selectPhotoFragment"
+        android:name="com.radziejewskig.todo.feature.selectphoto.SelectPhotoFragment"
+        android:label="SelectPhotoFragment"
+        tools:layout="@layout/fragment_select_photo"/>
+
+</navigation>

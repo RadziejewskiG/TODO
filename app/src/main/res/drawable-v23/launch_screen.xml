@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<layer-list xmlns:android="http://schemas.android.com/apk/res/android" android:opacity="opaque">
+    <item android:drawable="?attr/colorSurface" />
+
+    <item
+        android:width="@dimen/dp128"
+        android:height="@dimen/dp128"
+        android:gravity="center" >
+        <shape>
+            <solid android:color="?attr/colorPrimary" />
+            <corners android:radius="@dimen/dp128" />
+        </shape>
+    </item>
+
+    <item
+        android:drawable="@drawable/todo_logo"
+        android:height="@dimen/dp72"
+        android:width="@dimen/dp72"
+        android:gravity="center" />
+
+</layer-list>

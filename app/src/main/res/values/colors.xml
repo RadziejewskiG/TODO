@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<resources>
+
+    <color name="transparent">#00000000</color>
+
+    <color name="gray_surface">#FAFAFA</color>
+    <color name="gray_surface_light">#FDFDFD</color>
+    <color name="gray_surface_dark">#EFEFEF</color>
+
+    <color name="blue">#FF1565C0</color>
+    <color name="blue_darker">#FF0D47A1</color>
+
+    <color name="beige">#FFCDAB8F</color>
+    <color name="green">#FF418E38</color>
+
+    <color name="black_lighter">#212121</color>
+    <color name="black_lighter_alpha_more">#CC212121</color>
+    <color name="black_lighter_alpha">#80212121</color>
+
+    <color name="white">#FFFFFFFF</color>
+    <color name="black">#FF000000</color>
+
+    <color name="red">#FFb71c1c</color>
+
+    <color name="gray_logo">#FFDEDDDA</color>
+
+    <color name="gray">#C2C2C2</color>
+    <color name="gray_dark">#9C9C9C</color>
+    <color name="gray_light_darker">#E6E6E6</color>
+    <color name="gray_light">#EAEAEA</color>
+
+    <color name="white_alpha_40">#66FFFFFF</color>
+
+</resources>

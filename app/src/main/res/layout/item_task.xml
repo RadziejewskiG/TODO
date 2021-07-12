@@ -1,0 +1,79 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/taskItemContent"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:padding="@dimen/dp16"
+    android:background="@drawable/bg_rounded_3_ripple">
+
+    <ImageView
+        android:id="@+id/icon"
+        android:layout_width="@dimen/dp32"
+        android:layout_height="@dimen/dp32"
+        tools:background="@color/gray"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintStart_toStartOf="parent"/>
+
+    <TextView
+        android:id="@+id/title"
+        style="@style/MaterialTextViewStyleMediumTitle"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:minHeight="@dimen/dp32"
+        android:layout_marginStart="@dimen/dp12"
+        tools:text="Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua."
+        app:layout_constraintTop_toTopOf="@+id/icon"
+        app:layout_constraintStart_toEndOf="@+id/icon"
+        app:layout_constraintEnd_toEndOf="parent" />
+
+    <TextView
+        android:id="@+id/description"
+        style="@style/MaterialTextViewStyle"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/dp12"
+        tools:text="Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat."
+        app:layout_constraintTop_toBottomOf="@+id/title"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent" />
+
+    <TextView
+        android:id="@+id/tvDateTime"
+        style="@style/MaterialTextViewStyle"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:textSize="13sp"
+        android:textColor="@color/gray_dark"
+        android:maxLines="3"
+        android:ellipsize="end"
+        tools:text="14:13"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="@id/taskCbClickView"
+        app:layout_constraintBottom_toBottomOf="@id/taskCbClickView"/>
+
+    <FrameLayout
+        android:id="@+id/taskCbClickView"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/dp16"
+        app:layout_goneMarginTop="@dimen/dp24"
+        android:clickable="true"
+        android:focusable="true"
+        app:layout_constraintTop_toBottomOf="@+id/description"
+        app:layout_constraintEnd_toEndOf="parent" >
+
+        <CheckBox
+            android:id="@+id/cb"
+            style="@style/CheckboxStyle"
+            android:clickable="false"
+            android:layout_width="@dimen/dp32"
+            android:layout_height="@dimen/dp32"
+            android:padding="0dp"
+            android:checked="false"
+            tools:checked="true"/>
+
+    </FrameLayout>
+
+</androidx.constraintlayout.widget.ConstraintLayout>
