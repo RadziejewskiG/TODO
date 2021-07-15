@@ -1,14 +1,16 @@
 package com.radziejewskig.todo.feature.addedit
 
 import android.os.Parcelable
+import com.radziejewskig.todo.base.CommonEvent
 import com.radziejewskig.todo.base.CommonState
-import com.radziejewskig.todo.base.SingleEvent
 import com.radziejewskig.todo.data.model.Task
 import kotlinx.parcelize.Parcelize
 
-enum class AddEditTaskSingleEvent: SingleEvent {
-    SHOW_ERRORS,
-    NAVIGATE_BACK,
+sealed class AddEditTaskSingleEvent: CommonEvent {
+    class ShowErrors(
+        val editTaskErrors: EditTaskErrors
+    ): AddEditTaskSingleEvent()
+    object NavigateBack: AddEditTaskSingleEvent()
 }
 
 @Parcelize

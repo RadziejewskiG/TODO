@@ -1,29 +1,15 @@
 package com.radziejewskig.todo.base
 
-import android.os.Parcelable
 import androidx.annotation.CallSuper
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import com.radziejewskig.todo.extension.toMutableStateFlow
 import com.radziejewskig.todo.utils.CommonViewHelper
-import com.radziejewskig.todo.utils.EventWrapper
-import com.radziejewskig.todo.utils.ParcelableString
-import com.zhuinden.eventemitter.EventEmitter
-import com.zhuinden.eventemitter.EventSource
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import java.util.concurrent.atomic.AtomicBoolean
 
 abstract class BaseViewModel<BaseState: CommonState>(private val savedStateHandle: SavedStateHandle): ViewModel() {
-
-    val emitter: EventEmitter<EventWrapper<SingleEvent?>> = EventEmitter()
-    val events: EventSource<EventWrapper<SingleEvent?>> = emitter
-
-    protected fun SingleEvent.emit(
-        data: Parcelable = ParcelableString("")
-    ) {
-        emitter.emit(EventWrapper(this, data))
-    }
 
     protected val _state by lazy { savedStateHandle.getLiveData(STATE_BUNDLE_TAG, getStateClassFromType().newInstance()).toMutableStateFlow() }
     val state: StateFlow<StateWrapper<BaseState>> = _state

@@ -2,24 +2,22 @@ package com.radziejewskig.todo.base
 
 import android.content.Context
 import android.os.Bundle
-import android.os.Parcelable
 import android.view.View
 import androidx.annotation.CallSuper
 import androidx.annotation.LayoutRes
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.HasDefaultViewModelProviderFactory
 import androidx.lifecycle.ViewModelProvider
+import androidx.lifecycle.lifecycleScope
 import androidx.viewbinding.ViewBinding
 import com.radziejewskig.todo.di.InjectingSavedStateViewModelFactory
 import com.radziejewskig.todo.extension.*
 import com.radziejewskig.todo.feature.MainActivity
 import com.radziejewskig.todo.utils.DialogDepository
-import com.radziejewskig.todo.utils.data.MessageData
-import com.zhuinden.liveeventsample.utils.observe
 import java.util.concurrent.TimeUnit
 import javax.inject.Inject
 
-abstract class BaseFragment(@LayoutRes layoutRes: Int): Fragment(layoutRes), HasDefaultViewModelProviderFactory {
+abstract class BaseFragment<BaseEvent: CommonEvent>(@LayoutRes layoutRes: Int): Fragment(layoutRes), HasDefaultViewModelProviderFactory {
 
     /**
      * dagger.Lazy used here, so that injection is request when [getDefaultViewModelProviderFactory] is called
@@ -35,7 +33,7 @@ abstract class BaseFragment(@LayoutRes layoutRes: Int): Fragment(layoutRes), Has
 
     abstract fun injectDaggerDependencies()
 
-    abstract val viewModel: FragmentViewModel<out CommonState>
+    abstract val viewModel: FragmentViewModel<out CommonState, BaseEvent>
 
     abstract val binding: ViewBinding
 
@@ -74,6 +72,8 @@ abstract class BaseFragment(@LayoutRes layoutRes: Int): Fragment(layoutRes), Has
 
         setupEvents()
 
+        setupMessageEvent()
+
         viewModel.isProcessingData.collectLatestWhenStarted(viewLifecycleScope) { isProcessing ->
             if(isProcessing) {
                 showLoadingDialog()
@@ -100,20 +100,26 @@ abstract class BaseFragment(@LayoutRes layoutRes: Int): Fragment(layoutRes), Has
     open fun getArgsData() = Unit
 
     private fun setupEvents() {
-        viewModel.events.observe(viewLifecycleOwner) {
-            handleSingleEvent(it.getContentIfNotHandled(), it.data)
+        viewModel.events.collectWhenStartedAutoCancelling(
+            lifecycleScope,
+            lifecycle
+        ) {
+            handleSingleEvent(it.getContentIfNotHandled())
         }
     }
 
-    @CallSuper
-    open fun handleSingleEvent(singleEvent: SingleEvent?, data: Parcelable) {
-        when(singleEvent) {
-            CommonFragmentSingleEvent.SHOW_MESSAGE -> {
-                val showMessageData = data as MessageData
-                showMessage(showMessageData)
+    private fun setupMessageEvent() {
+        viewModel.messageEvent.collectWhenStartedAutoCancelling(
+            lifecycleScope,
+            lifecycle
+        ) {
+            it.getContentIfNotHandled()?.let { data ->
+                showMessage(data.messageData)
             }
         }
     }
+
+    open fun handleSingleEvent(event: BaseEvent?) = Unit
 
     fun showLoadingDialog() {
         dialogDepository()?.showLoadingDialog()

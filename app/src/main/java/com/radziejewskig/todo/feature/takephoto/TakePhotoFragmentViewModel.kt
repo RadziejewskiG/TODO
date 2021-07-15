@@ -5,8 +5,6 @@ import androidx.lifecycle.SavedStateHandle
 import com.radziejewskig.todo.base.FragmentViewModel
 import com.radziejewskig.todo.data.StorageRepository
 import com.radziejewskig.todo.di.AssistedSavedStateViewModelFactory
-import com.radziejewskig.todo.extension.withMain
-import com.radziejewskig.todo.utils.ParcelableString
 import dagger.assisted.Assisted
 import dagger.assisted.AssistedFactory
 import dagger.assisted.AssistedInject
@@ -16,7 +14,7 @@ import kotlinx.coroutines.ExperimentalCoroutinesApi
 class TakePhotoFragmentViewModel @AssistedInject constructor(
     private val storageRepository: StorageRepository,
     @Assisted private val handle: SavedStateHandle
-): FragmentViewModel<TakePhotoState>(handle) {
+): FragmentViewModel<TakePhotoState, TakePhotoEvent>(handle) {
 
     @AssistedFactory
     interface Factory: AssistedSavedStateViewModelFactory<TakePhotoFragmentViewModel>
@@ -30,9 +28,7 @@ class TakePhotoFragmentViewModel @AssistedInject constructor(
             launchLoading {
                 val result = storageRepository.uploadImage(bitmap)
                 result?.let {
-                    withMain {
-                        TakePhotoEvent.IMAGE_SAVED.emit(ParcelableString(result))
-                    }
+                    TakePhotoEvent.ImageSaved(it).emit()
                 }
             }
         }

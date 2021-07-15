@@ -6,10 +6,7 @@ import androidx.lifecycle.*
 import com.radziejewskig.todo.base.BaseViewModel.StateWrapper
 import com.radziejewskig.todo.base.CommonState
 import kotlinx.coroutines.*
-import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.StateFlow
-import kotlinx.coroutines.flow.collectLatest
+import kotlinx.coroutines.flow.*
 import kotlin.coroutines.CoroutineContext
 
 fun <T: CommonState> MutableLiveData<T>.toMutableStateFlow(): MutableStateFlow<StateWrapper<T>> = MutableStateFlow(StateWrapper(value!!))
@@ -30,32 +27,6 @@ fun <T> Flow<T>.collectLatestWhenStarted(
     }
 }
 
-fun <T> StateFlow<T>.collectLatestWhenStartedAutoCancelling(
-    lifecycleOwner: LifecycleOwner,
-    content: suspend CoroutineScope.(T) -> Unit
-) {
-    lifecycleOwner.lifecycleScope.launch {
-        lifecycleOwner.lifecycle.repeatOnLifecycle(Lifecycle.State.STARTED) {
-            collectLatest {
-                content(it)
-            }
-        }
-    }
-}
-
-fun <T> Flow<T>.collectLatestWhenStartedAutoCancelling(
-    lifecycleOwner: LifecycleOwner,
-    content: suspend CoroutineScope.(T) -> Unit
-) {
-    lifecycleOwner.lifecycleScope.launch {
-        lifecycleOwner.lifecycle.repeatOnLifecycle(Lifecycle.State.STARTED) {
-            collectLatest {
-                content(it)
-            }
-        }
-    }
-}
-
 fun <T: CommonState> StateFlow<StateWrapper<T>>.collectLatestStateWhenStartedAutoCancelling(
     lifecycleOwner: LifecycleOwner,
     content: suspend CoroutineScope.(T) -> Unit
@@ -64,6 +35,20 @@ fun <T: CommonState> StateFlow<StateWrapper<T>>.collectLatestStateWhenStartedAut
         lifecycleOwner.lifecycle.repeatOnLifecycle(Lifecycle.State.STARTED) {
             collectLatest {
                 content(it.state)
+            }
+        }
+    }
+}
+
+fun <T> Flow<T>.collectWhenStartedAutoCancelling(
+    scope: LifecycleCoroutineScope,
+    lifecycle: Lifecycle,
+    content: suspend CoroutineScope.(T) -> Unit
+) {
+    scope.launch {
+        lifecycle.repeatOnLifecycle(Lifecycle.State.STARTED) {
+            collect {
+                content(it)
             }
         }
     }

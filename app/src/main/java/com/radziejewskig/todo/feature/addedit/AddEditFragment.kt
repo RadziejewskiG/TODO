@@ -1,7 +1,6 @@
 package com.radziejewskig.todo.feature.addedit
 
 import android.os.Bundle
-import android.os.Parcelable
 import android.view.View
 import androidx.core.view.updatePadding
 import androidx.core.widget.addTextChangedListener
@@ -11,7 +10,6 @@ import androidx.navigation.fragment.navArgs
 import com.radziejewskig.todo.R
 import com.radziejewskig.todo.appComponent
 import com.radziejewskig.todo.base.BaseFragment
-import com.radziejewskig.todo.base.SingleEvent
 import com.radziejewskig.todo.databinding.FragmentAddEditBinding
 import com.radziejewskig.todo.extension.*
 import com.radziejewskig.todo.feature.list.TaskAdapter.Companion.getTaskEditSharedElementName
@@ -21,7 +19,7 @@ import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay
 
 @ExperimentalCoroutinesApi
-class AddEditFragment: BaseFragment(R.layout.fragment_add_edit) {
+class AddEditFragment: BaseFragment<AddEditTaskSingleEvent>(R.layout.fragment_add_edit) {
 
     override val binding by viewBinding(FragmentAddEditBinding::bind)
 
@@ -114,13 +112,13 @@ class AddEditFragment: BaseFragment(R.layout.fragment_add_edit) {
         }
     }
 
-    override fun handleSingleEvent(singleEvent: SingleEvent?, data: Parcelable) {
-        super.handleSingleEvent(singleEvent, data)
-        when(singleEvent) {
-            AddEditTaskSingleEvent.SHOW_ERRORS -> {
-                checkFields(data as EditTaskErrors)
+    override fun handleSingleEvent(event: AddEditTaskSingleEvent?) {
+        super.handleSingleEvent(event)
+        when(event) {
+            is AddEditTaskSingleEvent.ShowErrors -> {
+                checkFields(event.editTaskErrors)
             }
-            AddEditTaskSingleEvent.NAVIGATE_BACK -> {
+            is AddEditTaskSingleEvent.NavigateBack -> {
                 navigateBack()
             }
         }

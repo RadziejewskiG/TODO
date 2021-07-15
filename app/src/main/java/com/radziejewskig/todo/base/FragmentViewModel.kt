@@ -3,17 +3,39 @@ package com.radziejewskig.todo.base
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.viewModelScope
 import com.radziejewskig.todo.extension.launchSafe
-import com.radziejewskig.todo.extension.showMessage
-import com.radziejewskig.todo.extension.withMain
 import com.radziejewskig.todo.utils.ErrorUtil
+import com.radziejewskig.todo.utils.EventWrapper
 import com.radziejewskig.todo.utils.SafeHandleDelegate
 import com.radziejewskig.todo.utils.data.MessageData
 import com.radziejewskig.todo.utils.data.MessageType
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.channels.BufferOverflow
+import kotlinx.coroutines.flow.MutableSharedFlow
+import kotlinx.coroutines.flow.asSharedFlow
+import kotlinx.coroutines.launch
 import kotlin.coroutines.CoroutineContext
 
-abstract class FragmentViewModel<BaseState: CommonState>(stateHandle: SavedStateHandle): BaseViewModel<BaseState>(stateHandle) {
+abstract class FragmentViewModel<BaseState: CommonState, BaseEvent: CommonEvent>(stateHandle: SavedStateHandle): BaseViewModel<BaseState>(stateHandle) {
+
+    protected val _events = MutableSharedFlow<EventWrapper<BaseEvent>>(
+        replay = 10,
+        onBufferOverflow = BufferOverflow.DROP_OLDEST
+    )
+    val events = _events.asSharedFlow()
+
+    private val _messageEvent = MutableSharedFlow<EventWrapper<ShowMessage>>(
+        replay = 1,
+        onBufferOverflow = BufferOverflow.DROP_OLDEST
+    )
+    val messageEvent = _messageEvent.asSharedFlow()
+
+    fun BaseEvent.emit() {
+        val event = this
+        viewModelScope.launch {
+            _events.emit(EventWrapper(event))
+        }
+    }
 
     var shouldPostponeOnReturn: Boolean by SafeHandleDelegate(stateHandle, "shouldPostponeOnReturn", false)
     var shouldPostponeOnEnter: Boolean by SafeHandleDelegate(stateHandle, "shouldPostponeOnEnter", false)
@@ -42,14 +64,12 @@ abstract class FragmentViewModel<BaseState: CommonState>(stateHandle: SavedState
         },
         onError = { error ->
             if(showErrorMessages) {
-                withMain {
-                    showMessage(
-                        MessageData(
-                            MessageType.ERROR,
-                            messageRes = ErrorUtil.getStringResForException(error)
-                        )
+                showMessage(
+                    MessageData(
+                        MessageType.ERROR,
+                        messageRes = ErrorUtil.getStringResForException(error)
                     )
-                }
+                )
             }
             onError(error)
             setIsProcessingData(false)
@@ -66,17 +86,21 @@ abstract class FragmentViewModel<BaseState: CommonState>(stateHandle: SavedState
         content = content,
         onError = { error ->
             if(showErrorMessages) {
-                withMain {
-                    showMessage(
-                        MessageData(
-                            MessageType.ERROR,
-                            messageRes = ErrorUtil.getStringResForException(error)
-                        )
+                showMessage(
+                    MessageData(
+                        MessageType.ERROR,
+                        messageRes = ErrorUtil.getStringResForException(error)
                     )
-                }
+                )
             }
             onError(error)
         }
     )
+
+    protected fun showMessage(showMessageData: MessageData) {
+        viewModelScope.launch {
+            _messageEvent.emit(EventWrapper(ShowMessage(showMessageData)))
+        }
+    }
 
 }

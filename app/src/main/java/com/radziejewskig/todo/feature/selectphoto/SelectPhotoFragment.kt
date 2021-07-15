@@ -9,6 +9,7 @@ import androidx.recyclerview.widget.RecyclerView
 import com.radziejewskig.todo.R
 import com.radziejewskig.todo.appComponent
 import com.radziejewskig.todo.base.BaseFragment
+import com.radziejewskig.todo.base.CommonEvent
 import com.radziejewskig.todo.databinding.FragmentSelectPhotoBinding
 import com.radziejewskig.todo.extension.collectLatestWhenStarted
 import com.radziejewskig.todo.extension.popWithData
@@ -18,7 +19,7 @@ import com.radziejewskig.todo.utils.viewBinding
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 
 @ExperimentalCoroutinesApi
-class SelectPhotoFragment: BaseFragment(R.layout.fragment_select_photo) {
+class SelectPhotoFragment: BaseFragment<CommonEvent>(R.layout.fragment_select_photo) {
 
     override val binding by viewBinding(FragmentSelectPhotoBinding::bind)
 

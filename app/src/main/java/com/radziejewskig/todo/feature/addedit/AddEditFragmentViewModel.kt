@@ -6,7 +6,6 @@ import com.radziejewskig.todo.data.TaskRepository
 import com.radziejewskig.todo.data.model.Task
 import com.radziejewskig.todo.di.AssistedSavedStateViewModelFactory
 import com.radziejewskig.todo.extension.trimNormalize
-import com.radziejewskig.todo.extension.withMain
 import com.radziejewskig.todo.feature.addedit.AddEditFragment.Companion.DESCRIPTION_MAX_LENGTH
 import com.radziejewskig.todo.feature.addedit.AddEditFragment.Companion.TITLE_MAX_LENGTH
 import com.radziejewskig.todo.utils.ValidationUtil
@@ -21,7 +20,7 @@ import kotlinx.coroutines.flow.MutableStateFlow
 class AddEditFragmentViewModel @AssistedInject constructor(
     private val taskRepository: TaskRepository,
     @Assisted private val handle: SavedStateHandle
-): FragmentViewModel<AddEditFragmentState>(handle) {
+): FragmentViewModel<AddEditFragmentState, AddEditTaskSingleEvent>(handle) {
 
     @AssistedFactory
     interface Factory : AssistedSavedStateViewModelFactory<AddEditFragmentViewModel>
@@ -88,9 +87,7 @@ class AddEditFragmentViewModel @AssistedInject constructor(
                 // Some delay just to show loading dialog for a while
                 delay(300)
 
-                withMain {
-                    AddEditTaskSingleEvent.NAVIGATE_BACK.emit()
-                }
+                AddEditTaskSingleEvent.NavigateBack.emit()
             }
         } else {
             sendUIErrors(task)
@@ -103,7 +100,7 @@ class AddEditFragmentViewModel @AssistedInject constructor(
             showTitleTooLongError = task.title.apply { trimNormalize() }.length > TITLE_MAX_LENGTH,
             showDescriptionTooLongError = (task.description?.apply { trimNormalize() }?.length ?: 0) > DESCRIPTION_MAX_LENGTH
         )
-        AddEditTaskSingleEvent.SHOW_ERRORS.emit(errorsData)
+        AddEditTaskSingleEvent.ShowErrors(errorsData).emit()
     }
 
     override fun saveToBundle() {

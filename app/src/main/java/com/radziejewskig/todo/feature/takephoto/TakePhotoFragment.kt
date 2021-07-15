@@ -4,7 +4,6 @@ import android.graphics.Bitmap
 import android.graphics.BitmapFactory
 import android.net.Uri
 import android.os.Bundle
-import android.os.Parcelable
 import android.view.View
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.core.content.FileProvider
@@ -15,19 +14,17 @@ import androidx.fragment.app.viewModels
 import com.radziejewskig.todo.R
 import com.radziejewskig.todo.appComponent
 import com.radziejewskig.todo.base.BaseFragment
-import com.radziejewskig.todo.base.SingleEvent
 import com.radziejewskig.todo.databinding.FragmentTakePhotoBinding
 import com.radziejewskig.todo.extension.*
 import com.radziejewskig.todo.feature.addedit.AddEditFragment.Companion.IMAGE_URL_ARG
 import com.radziejewskig.todo.utils.FileUtils
-import com.radziejewskig.todo.utils.ParcelableString
 import com.radziejewskig.todo.utils.viewBinding
 import com.theartofdev.edmodo.cropper.CropImageView
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import javax.inject.Inject
 
 @ExperimentalCoroutinesApi
-class TakePhotoFragment: BaseFragment(R.layout.fragment_take_photo) {
+class TakePhotoFragment: BaseFragment<TakePhotoEvent>(R.layout.fragment_take_photo) {
 
     override val binding by viewBinding(FragmentTakePhotoBinding::bind)
 
@@ -88,13 +85,12 @@ class TakePhotoFragment: BaseFragment(R.layout.fragment_take_photo) {
         tryGetBitmapAndAttachToImv()
     }
 
-    override fun handleSingleEvent(singleEvent: SingleEvent?, data: Parcelable) {
-        super.handleSingleEvent(singleEvent, data)
-        when(singleEvent) {
-            TakePhotoEvent.IMAGE_SAVED -> {
+    override fun handleSingleEvent(event: TakePhotoEvent?) {
+        when(event) {
+            is TakePhotoEvent.ImageSaved -> {
                 popWithData(
                     IMAGE_URL_ARG,
-                    (data as ParcelableString).value
+                    event.imageUrl
                 )
             }
         }

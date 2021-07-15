@@ -1,12 +1,14 @@
 package com.radziejewskig.todo.feature.takephoto
 
 import android.os.Parcelable
+import com.radziejewskig.todo.base.CommonEvent
 import com.radziejewskig.todo.base.CommonState
-import com.radziejewskig.todo.base.SingleEvent
 import kotlinx.parcelize.Parcelize
 
-enum class TakePhotoEvent: SingleEvent {
-    IMAGE_SAVED
+sealed class TakePhotoEvent: CommonEvent {
+    class ImageSaved(
+        val imageUrl: String
+    ): TakePhotoEvent()
 }
 
 @Parcelize

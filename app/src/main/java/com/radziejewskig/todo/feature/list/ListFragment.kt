@@ -13,6 +13,7 @@ import androidx.recyclerview.widget.RecyclerView
 import com.radziejewskig.todo.R
 import com.radziejewskig.todo.appComponent
 import com.radziejewskig.todo.base.BaseFragment
+import com.radziejewskig.todo.base.CommonEvent
 import com.radziejewskig.todo.data.model.Task
 import com.radziejewskig.todo.databinding.FragmentListBinding
 import com.radziejewskig.todo.extension.*
@@ -22,7 +23,7 @@ import com.radziejewskig.todo.utils.viewBinding
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 
 @ExperimentalCoroutinesApi
-class ListFragment: BaseFragment(R.layout.fragment_list) {
+class ListFragment: BaseFragment<CommonEvent>(R.layout.fragment_list) {
 
     override val binding by viewBinding(FragmentListBinding::bind)
 

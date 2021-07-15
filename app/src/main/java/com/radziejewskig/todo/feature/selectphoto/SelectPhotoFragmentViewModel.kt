@@ -1,6 +1,7 @@
 package com.radziejewskig.todo.feature.selectphoto
 
 import androidx.lifecycle.SavedStateHandle
+import com.radziejewskig.todo.base.CommonEvent
 import com.radziejewskig.todo.base.CommonState
 import com.radziejewskig.todo.base.FragmentViewModel
 import com.radziejewskig.todo.data.StorageRepository
@@ -16,7 +17,7 @@ import kotlinx.coroutines.flow.SharedFlow
 class SelectPhotoFragmentViewModel @AssistedInject constructor(
     private val storageRepository: StorageRepository,
     @Assisted private val handle: SavedStateHandle
-): FragmentViewModel<CommonState>(handle) {
+): FragmentViewModel<CommonState, CommonEvent>(handle) {
 
     private val _photos = MutableSharedFlow<List<String>>(replay = 1)
     val photos: SharedFlow<List<String>> = _photos

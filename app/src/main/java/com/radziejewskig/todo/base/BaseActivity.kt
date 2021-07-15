@@ -2,7 +2,6 @@ package com.radziejewskig.todo.base
 
 import android.content.Intent
 import android.os.Bundle
-import android.os.Parcelable
 import android.view.WindowManager
 import androidx.activity.addCallback
 import androidx.annotation.CallSuper
@@ -15,11 +14,8 @@ import androidx.navigation.findNavController
 import androidx.viewbinding.ViewBinding
 import com.radziejewskig.todo.R
 import com.radziejewskig.todo.di.InjectingSavedStateViewModelFactory
-import com.radziejewskig.todo.extension.collectLatestWhenStarted
-import com.radziejewskig.todo.extension.hideKeyboard
-import com.radziejewskig.todo.extension.launchLifecycleScopeWhenStarted
+import com.radziejewskig.todo.extension.*
 import com.radziejewskig.todo.utils.DialogDepository
-import com.zhuinden.liveeventsample.utils.observe
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay
 import javax.inject.Inject
@@ -86,7 +82,7 @@ abstract class BaseActivity: AppCompatActivity(), HasDefaultViewModelProviderFac
                 val fragmentHandlesBack = try {
                     val currentFragment = supportFragmentManager.findFragmentById(R.id.mainNavHostFragment)?.childFragmentManager?.fragments?.get(0)
                     try {
-                        (currentFragment as BaseFragment?)?.onBackPressed() ?: false
+                        (currentFragment as BaseFragment<*>?)?.onBackPressed() ?: false
                     } catch (e: Exception) {
                         false
                     }
@@ -116,8 +112,6 @@ abstract class BaseActivity: AppCompatActivity(), HasDefaultViewModelProviderFac
 
         window.addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON)
 
-        setupEvents()
-
         viewModel.start()
 
         ViewCompat.setOnApplyWindowInsetsListener(binding.root, OnApplyWindowInsetsListener { v, insets ->
@@ -135,22 +129,6 @@ abstract class BaseActivity: AppCompatActivity(), HasDefaultViewModelProviderFac
         })
         WindowCompat.setDecorFitsSystemWindows(window, false)
     }
-
-    private fun setupEvents() {
-        viewModel.events.observe(this) {
-            handleSingleEvent(it.getContentIfNotHandled(), it.data)
-        }
-    }
-
-    @CallSuper
-    open fun handleSingleEvent(singleEvent: SingleEvent?, data: Parcelable) = when(singleEvent) {
-        CommonActivitySingleEvent.SHOW_LOADING_DIALOG -> showLoadingDialog()
-        CommonActivitySingleEvent.HIDE_LOADING_DIALOG -> hideDialog()
-        else -> { }
-    }
-
-    private fun showLoadingDialog() = dialogDepository.showLoadingDialog()
-    private fun hideDialog() = dialogDepository.hideDialog()
 
     open fun onBackPress(): Boolean = false
 

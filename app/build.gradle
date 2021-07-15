@@ -80,9 +80,6 @@ dependencies {
     }
     kapt 'com.github.bumptech.glide:compiler:4.11.0'
 
-    //  Event emitter with event queue - better than LiveData implementation(SingleLiveEvent)
-    implementation 'com.github.Zhuinden:live-event:1.0.0'
-
     // Navigation component
     implementation "androidx.navigation:navigation-fragment-ktx:$nav_component_version"
     implementation "androidx.navigation:navigation-ui-ktx:$nav_component_version"

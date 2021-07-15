@@ -1,18 +1,14 @@
 package com.radziejewskig.todo.base
 
 import android.os.Parcelable
+import com.radziejewskig.todo.utils.data.MessageData
 import kotlinx.parcelize.Parcelize
 
 @Parcelize
 open class CommonState: Parcelable
 
-interface SingleEvent
+interface CommonEvent
 
-enum class CommonActivitySingleEvent: SingleEvent {
-    SHOW_LOADING_DIALOG,
-    HIDE_LOADING_DIALOG,
-}
-
-enum class CommonFragmentSingleEvent: SingleEvent {
-    SHOW_MESSAGE,
-}
+class ShowMessage(
+    val messageData: MessageData
+)

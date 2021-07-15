@@ -1,12 +1,6 @@
 package com.radziejewskig.todo.utils
 
-import android.os.Parcelable
-import kotlinx.parcelize.Parcelize
-
-@Parcelize
-data class ParcelableString(val value: String): Parcelable
-
-open class EventWrapper<out T>(private val content: T, val data: Parcelable = ParcelableString("")) {
+class EventWrapper<out T>(private val content: T) {
     private var hasBeenHandled = false
 
     fun getContentIfNotHandled(): T? {

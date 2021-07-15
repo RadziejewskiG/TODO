@@ -3,13 +3,12 @@ package com.radziejewskig.todo.feature.list
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.viewModelScope
 import com.radziejewskig.todo.R
+import com.radziejewskig.todo.base.CommonEvent
 import com.radziejewskig.todo.base.FragmentViewModel
 import com.radziejewskig.todo.data.TaskRepository
 import com.radziejewskig.todo.data.model.Task
 import com.radziejewskig.todo.di.AssistedSavedStateViewModelFactory
 import com.radziejewskig.todo.extension.sameContentAs
-import com.radziejewskig.todo.extension.showMessage
-import com.radziejewskig.todo.extension.withMain
 import com.radziejewskig.todo.utils.ErrorUtil
 import com.radziejewskig.todo.utils.data.MessageData
 import com.radziejewskig.todo.utils.data.MessageType
@@ -29,7 +28,7 @@ import kotlinx.coroutines.launch
 class ListFragmentViewModel @AssistedInject constructor(
     private val taskRepository: TaskRepository,
     @Assisted private val handle: SavedStateHandle
-): FragmentViewModel<ListFragmentState>(handle) {
+): FragmentViewModel<ListFragmentState, CommonEvent>(handle) {
 
     @AssistedFactory
     interface Factory: AssistedSavedStateViewModelFactory<ListFragmentViewModel>
@@ -210,23 +209,24 @@ class ListFragmentViewModel @AssistedInject constructor(
                                     showNoInternetConnectionJob?.cancel()
                                     showNoInternetConnectionJob = viewModelScope.launch {
                                         delay(2000)
-                                        withMain {
-                                            showMessage(MessageData(MessageType.ERROR, messageRes = R.string.error_check_internet_connection))
-                                        }
+                                        showMessage(
+                                            MessageData(
+                                                MessageType.ERROR,
+                                                messageRes = R.string.error_check_internet_connection
+                                            )
+                                        )
                                     }
                                 }
                             }
 
                         } else {
                             if(stateValue().loadingNewPage) {
-                                withMain {
-                                    showMessage(
-                                        MessageData(
-                                            MessageType.ERROR,
-                                            messageRes = ErrorUtil.getStringResForException(error)
-                                        )
+                                showMessage(
+                                    MessageData(
+                                        MessageType.ERROR,
+                                        messageRes = ErrorUtil.getStringResForException(error)
                                     )
-                                }
+                                )
                             }
                         }
                     }

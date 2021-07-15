@@ -11,9 +11,6 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.ImageView
 import android.widget.TextView
-import androidx.annotation.AttrRes
-import androidx.annotation.ColorInt
-import androidx.annotation.ColorRes
 import androidx.annotation.IdRes
 import androidx.core.app.SharedElementCallback
 import androidx.core.content.ContextCompat
@@ -37,13 +34,13 @@ import com.radziejewskig.todo.utils.data.ReturnedTransitionData
 import com.radziejewskig.todo.utils.data.getMessageString
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 
-fun BaseFragment.hideKeyboard() {
+fun BaseFragment<*>.hideKeyboard() {
     ac()?.hideKeyboard()
 }
 
-fun BaseFragment.showKeyboard(view: View) = ac()?.showKeyboard(view)
+fun BaseFragment<*>.showKeyboard(view: View) = ac()?.showKeyboard(view)
 
-val BaseFragment.viewLifecycleScope: LifecycleCoroutineScope
+val BaseFragment<*>.viewLifecycleScope: LifecycleCoroutineScope
     get() = viewLifecycleOwner.lifecycleScope
 
 fun <T> Fragment.getReturnedData(
@@ -68,13 +65,6 @@ fun <T> Fragment.getReturnedData(
     })
 }
 
-fun <T> Fragment.observeBackStackValue(
-    valueName: String,
-    content: (T) -> Unit,
-) {
-    findNavController().currentBackStackEntry?.savedStateHandle?.getLiveData<T>(valueName)?.observe(viewLifecycleOwner, content)
-}
-
 fun <T> Fragment.sendBackStackValue(valueName: String, value: T) {
     findNavController().previousBackStackEntry?.savedStateHandle?.set(valueName, value)
 }
@@ -84,17 +74,7 @@ fun <T> Fragment.popWithData(valueName: String, value: T) {
     findNavController().popBackStack()
 }
 
-fun BaseFragment.navigateSafe(
-    directions: NavDirections,
-    navOptions: NavOptions? = null,
-    canNavigateTurnBackOnDelay: Long = 300
-) {
-    if(canNavigateSafe(directions, canNavigateTurnBackOnDelay)) {
-        findNavController().navigate(directions, navOptions)
-    }
-}
-
-fun BaseFragment.navigateSafe(
+fun BaseFragment<*>.navigateSafe(
     @IdRes actionId: Int,
     args: Bundle? = null,
     navOptions: NavOptions? = null,
@@ -106,7 +86,7 @@ fun BaseFragment.navigateSafe(
     } else false
 }
 
-private fun BaseFragment.canNavigateSafe(
+private fun BaseFragment<*>.canNavigateSafe(
     @IdRes resId: Int,
     canNavigateTurnBackOnDelay: Long = 300
 ): Boolean {
@@ -122,30 +102,7 @@ private fun BaseFragment.canNavigateSafe(
     } else false
 }
 
-private fun BaseFragment.canNavigateSafe(
-    directions: NavDirections,
-    canNavigateTurnBackOnDelay: Long = 300
-): Boolean {
-    return if(
-        findNavController().currentDestination?.getAction(directions.actionId) != null &&
-        (ac()?.lastNavComponentActionId == null || ac()?.lastNavComponentActionId != directions.actionId) &&
-        ac()?.canNavigate() == true
-    ) {
-        if(canNavigateTurnBackOnDelay > 0) {
-            ac()?.setCanNavigate(false, canNavigateTurnBackOnDelay)
-        }
-        ac()?.lastNavComponentActionId = directions.actionId
-        true
-    } else false
-}
-
-@ColorInt
-fun Fragment.getColorFromAttr(@AttrRes attrColor: Int) = requireContext().getColorFromAttr(attrColor)
-
-@ColorInt
-fun Fragment.getColor(@ColorRes colorRes: Int) = requireContext().getColorFromRes(colorRes)
-
-fun BaseFragment.navigateSharedElements(
+fun BaseFragment<*>.navigateSharedElements(
     directions: NavDirections,
     transitionOnExit: Transition? = Fade().apply { duration = 250 },
     shouldPostponeOnReturn: Boolean = true,
@@ -174,7 +131,7 @@ fun BaseFragment.navigateSharedElements(
     }
 }
 
-fun BaseFragment.setupSharedElements(
+fun BaseFragment<*>.setupSharedElements(
     // THIS MUST BE android.transition AND NOT androidx.transition!!!
     transitionSet: TransitionSet,
     transitionOnReturn: Transition? = Fade().apply {
@@ -214,7 +171,7 @@ fun BaseFragment.setupSharedElements(
 }
 
 @ExperimentalCoroutinesApi
-fun BaseFragment.setupReturnedContinuousSharedElements(
+fun BaseFragment<*>.setupReturnedContinuousSharedElements(
     transitionOnReturn: Transition = Fade().apply { duration = 250 },
     dataReturned: (ReturnedTransitionData) -> Unit = {},
     onMapSharedElements: (ReturnedTransitionData, MutableList<String>, MutableMap<String, View>) -> Unit
@@ -245,7 +202,7 @@ fun BaseFragment.setupReturnedContinuousSharedElements(
 }
 
 @ExperimentalCoroutinesApi
-fun BaseFragment.popSharedElements(
+fun BaseFragment<*>.popSharedElements(
     value: String,
 ) {
     if(canNavigate()) {
@@ -260,7 +217,7 @@ fun BaseFragment.popSharedElements(
     }
 }
 
-fun BaseFragment.showMessage(messageData: MessageData) {
+fun BaseFragment<*>.showMessage(messageData: MessageData) {
 
     val context = requireContext()
 
