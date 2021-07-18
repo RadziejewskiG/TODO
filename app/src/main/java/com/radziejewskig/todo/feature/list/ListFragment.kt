@@ -23,7 +23,7 @@ import com.radziejewskig.todo.utils.viewBinding
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 
 @ExperimentalCoroutinesApi
-class ListFragment: BaseFragment<CommonEvent>(R.layout.fragment_list) {
+class ListFragment: BaseFragment<ListFragmentState, CommonEvent>(R.layout.fragment_list) {
 
     override val binding by viewBinding(FragmentListBinding::bind)
 
@@ -88,40 +88,40 @@ class ListFragment: BaseFragment<CommonEvent>(R.layout.fragment_list) {
 
         viewModel.tasks.collectLatestWhenStarted(viewLifecycleScope) { tasks ->
             with(binding) {
-                    taskAdapter.submitList(tasks) {
-                        if (!viewModel.stateValue().loadingBarShowing) {
-                            viewModel.resetLoadingStates()
-                            val changedItemId = viewModel.changedItemId
-                            if(changedItemId != null) {
-                                viewModel.changedItemId = null
-                                tasks.firstOrNull { it is TaskListItemModel.TaskItem && it.task.id == changedItemId }?.let { item ->
-                                    val position = tasks.indexOf(item)
-                                    taskAdapter.notifyItemChanged(position, true)
-                                }
+                taskAdapter.submitList(tasks) {
+                    if (!viewModel.loadingBarShowing) {
+                        viewModel.resetLoadingStates()
+                        val changedItemId = viewModel.changedItemId
+                        if(changedItemId != null) {
+                            viewModel.resetChangedItemId()
+                            tasks.firstOrNull { it is TaskListItemModel.TaskItem && it.task.id == changedItemId }?.let { item ->
+                                val position = tasks.indexOf(item)
+                                taskAdapter.notifyItemChanged(position, true)
                             }
-                        } else {
-                            // Scroll rv to the bottom to fully show loading bar
-                            rv.stopScroll()
-                            rv.scrollBy(0, 250)
                         }
+                    } else {
+                        // Scroll rv to the bottom to fully show loading bar
+                        rv.stopScroll()
+                        rv.scrollBy(0, 250)
                     }
+                }
                 if(viewModel.canShowEmptyImage) {
                     emptyLl.alpha = if(tasks.isEmpty()) 1f else 0f
                 } else {
                     emptyLl.alpha = 0f
-                    viewModel.canShowEmptyImage = true
+                    viewModel.setCanShowEmptyImage(true)
                 }
             }
         }
 
-        viewModel.state.collectLatestStateWhenStartedAutoCancelling(viewLifecycleOwner) { state ->
+        viewModel.state.collectLatestWhenStartedAutoCancelling(viewLifecycleOwner) { state ->
             binding.progressBar.isVisible = state.isUpdating
         }
 
     }
 
     private fun itemLongClicked(task: Task) {
-        if(!viewModel.stateValue().isUpdating) {
+        if(!currentState.isUpdating) {
             dialogDepository()?.showInfoDialog(
                 title = getString(R.string.deleting_task_title),
                 message = getString(R.string.deleting_task_message, task.title),
@@ -138,7 +138,7 @@ class ListFragment: BaseFragment<CommonEvent>(R.layout.fragment_list) {
     }
 
     private fun itemClicked(task: Task, view: View) {
-        if(!viewModel.stateValue().isUpdating) {
+        if(!currentState.isUpdating) {
             navigateSharedElements(
                 directions = ListFragmentDirections.actionListToAddeditNoAnim(task.copy()),
                 transitionNamesWithViews = listOf(view.transitionName to view)
@@ -173,7 +173,7 @@ class ListFragment: BaseFragment<CommonEvent>(R.layout.fragment_list) {
     }
 
     private fun fabClicked() {
-        if(!viewModel.stateValue().isUpdating) {
+        if(!currentState.isUpdating) {
             binding.rv.stopScroll()
             navigateSafe(
                 R.id.action_listFragment_to_addEditFragment,

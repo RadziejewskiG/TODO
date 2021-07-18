@@ -24,7 +24,7 @@ import kotlinx.coroutines.ExperimentalCoroutinesApi
 import javax.inject.Inject
 
 @ExperimentalCoroutinesApi
-class TakePhotoFragment: BaseFragment<TakePhotoEvent>(R.layout.fragment_take_photo) {
+class TakePhotoFragment: BaseFragment<TakePhotoState, TakePhotoEvent>(R.layout.fragment_take_photo) {
 
     override val binding by viewBinding(FragmentTakePhotoBinding::bind)
 
@@ -76,7 +76,7 @@ class TakePhotoFragment: BaseFragment<TakePhotoEvent>(R.layout.fragment_take_pho
                 viewModel.saveImage(binding.cropImageView.croppedImage)
             }
 
-            viewModel.state.collectLatestStateWhenStartedAutoCancelling(viewLifecycleOwner) { state ->
+            viewModel.state.collectLatestWhenStartedAutoCancelling(viewLifecycleOwner) { state ->
                 tvDesc.isVisible = state.currentPhotoPath.isEmpty()
             }
         }
@@ -98,8 +98,8 @@ class TakePhotoFragment: BaseFragment<TakePhotoEvent>(R.layout.fragment_take_pho
 
     private fun tryGetBitmapAndAttachToImv() = launchLifecycleScopeWhenStarted {
         withIo {
-            BitmapFactory.decodeFile(viewModel.stateValue().currentPhotoPath)?.also { bitmap ->
-                val exif = ExifInterface(viewModel.stateValue().currentPhotoPath)
+            BitmapFactory.decodeFile(currentState.currentPhotoPath)?.also { bitmap ->
+                val exif = ExifInterface(currentState.currentPhotoPath)
                 withMain {
                     attachNewBitmapToImv(bitmap, exif)
                 }

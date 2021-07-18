@@ -20,5 +20,5 @@ fun AppCompatActivity.showKeyboard(view: View) {
 }
 
 fun BaseActivity.setLightStatusBarAppearance(isLight: Boolean) {
-    viewModel.isStatusBarLight.value = isLight
+    viewModel.setIsStatusBarLight(isLight)
 }

@@ -13,5 +13,5 @@ sealed class TakePhotoEvent: CommonEvent {
 
 @Parcelize
 data class TakePhotoState(
-    var currentPhotoPath: String = ""
+    val currentPhotoPath: String = ""
 ): CommonState(), Parcelable

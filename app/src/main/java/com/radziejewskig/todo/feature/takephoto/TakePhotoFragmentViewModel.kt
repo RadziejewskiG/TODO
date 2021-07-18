@@ -20,7 +20,11 @@ class TakePhotoFragmentViewModel @AssistedInject constructor(
     interface Factory: AssistedSavedStateViewModelFactory<TakePhotoFragmentViewModel>
 
     fun assignNewPhotoPath(photoPath: String) {
-        state.mutate { currentPhotoPath = photoPath }
+        mutateState {
+            copy(
+                currentPhotoPath = photoPath
+            )
+        }
     }
 
     fun saveImage(bitmap: Bitmap?) {

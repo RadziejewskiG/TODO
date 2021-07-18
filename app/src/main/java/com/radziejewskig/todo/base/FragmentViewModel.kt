@@ -18,13 +18,13 @@ import kotlin.coroutines.CoroutineContext
 
 abstract class FragmentViewModel<BaseState: CommonState, BaseEvent: CommonEvent>(stateHandle: SavedStateHandle): BaseViewModel<BaseState>(stateHandle) {
 
-    protected val _events = MutableSharedFlow<EventWrapper<BaseEvent>>(
-        replay = 10,
+    private val _events = MutableSharedFlow<EventWrapper<BaseEvent>>(
+        replay = 7,
         onBufferOverflow = BufferOverflow.DROP_OLDEST
     )
     val events = _events.asSharedFlow()
 
-    private val _messageEvent = MutableSharedFlow<EventWrapper<ShowMessage>>(
+    private val _messageEvent = MutableSharedFlow<EventWrapper<ShowMessageEvent>>(
         replay = 1,
         onBufferOverflow = BufferOverflow.DROP_OLDEST
     )
@@ -99,7 +99,7 @@ abstract class FragmentViewModel<BaseState: CommonState, BaseEvent: CommonEvent>
 
     protected fun showMessage(showMessageData: MessageData) {
         viewModelScope.launch {
-            _messageEvent.emit(EventWrapper(ShowMessage(showMessageData)))
+            _messageEvent.emit(EventWrapper(ShowMessageEvent(showMessageData)))
         }
     }
 

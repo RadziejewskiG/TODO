@@ -11,7 +11,7 @@ import dagger.assisted.AssistedFactory
 import dagger.assisted.AssistedInject
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.MutableSharedFlow
-import kotlinx.coroutines.flow.SharedFlow
+import kotlinx.coroutines.flow.asSharedFlow
 
 @ExperimentalCoroutinesApi
 class SelectPhotoFragmentViewModel @AssistedInject constructor(
@@ -20,7 +20,7 @@ class SelectPhotoFragmentViewModel @AssistedInject constructor(
 ): FragmentViewModel<CommonState, CommonEvent>(handle) {
 
     private val _photos = MutableSharedFlow<List<String>>(replay = 1)
-    val photos: SharedFlow<List<String>> = _photos
+    val photos = _photos.asSharedFlow()
 
     @AssistedFactory
     interface Factory: AssistedSavedStateViewModelFactory<SelectPhotoFragmentViewModel>

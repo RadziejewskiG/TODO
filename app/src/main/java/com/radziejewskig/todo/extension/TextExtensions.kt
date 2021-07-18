@@ -4,7 +4,7 @@ import android.widget.EditText
 
 fun String?.trimNormalize() = this?.trim()?.replace("\\s+".toRegex(), " ")
 
-fun EditText.setTextIfDiffers(text: String?) = if (
-    (text.isNullOrEmpty() && this.text.isNullOrEmpty()) ||
-    text == this.text?.toString()
-) Unit else this.setText(text)
+fun EditText.setTextIfDiffers(t: String?) = if (
+    (t.isNullOrEmpty() && text.isNullOrEmpty()) ||
+    t == text?.toString()
+) Unit else this.setText(t)

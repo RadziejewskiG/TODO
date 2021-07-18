@@ -17,7 +17,7 @@ import com.radziejewskig.todo.utils.DialogDepository
 import java.util.concurrent.TimeUnit
 import javax.inject.Inject
 
-abstract class BaseFragment<BaseEvent: CommonEvent>(@LayoutRes layoutRes: Int): Fragment(layoutRes), HasDefaultViewModelProviderFactory {
+abstract class BaseFragment<BaseState: CommonState, BaseEvent: CommonEvent>(@LayoutRes layoutRes: Int): Fragment(layoutRes), HasDefaultViewModelProviderFactory {
 
     /**
      * dagger.Lazy used here, so that injection is request when [getDefaultViewModelProviderFactory] is called
@@ -33,7 +33,7 @@ abstract class BaseFragment<BaseEvent: CommonEvent>(@LayoutRes layoutRes: Int): 
 
     abstract fun injectDaggerDependencies()
 
-    abstract val viewModel: FragmentViewModel<out CommonState, BaseEvent>
+    abstract val viewModel: FragmentViewModel<BaseState, BaseEvent>
 
     abstract val binding: ViewBinding
 
@@ -42,11 +42,12 @@ abstract class BaseFragment<BaseEvent: CommonEvent>(@LayoutRes layoutRes: Int): 
     fun ac(): MainActivity? = (activity as MainActivity?)
 
     fun canNavigate() = ac()?.canNavigate() ?: true
-    fun canNavigateFlow() = ac()?.canNavigateFlow()
 
     protected fun dialogDepository(): DialogDepository? = ac()?.dialogDepository
 
-    open var isStatusBarLight: Boolean = true
+    open val isStatusBarLight: Boolean = true
+
+    protected val currentState: BaseState by lazy { viewModel.currentState }
 
     @CallSuper
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
@@ -58,17 +59,7 @@ abstract class BaseFragment<BaseEvent: CommonEvent>(@LayoutRes layoutRes: Int): 
 
         viewModel.start()
 
-        if(viewModel.shouldPostponeOnReturn) {
-            viewModel.shouldPostponeOnReturn = false
-            /** Start postponed transition after 300 ms no matter what - this prevents app from being paused for too long */
-            postponeEnterTransition(300, TimeUnit.MILLISECONDS)
-        } else if(viewModel.enterTransitionAlreadyPostponed && viewModel.shouldPostponeOnEnter) {
-            viewModel.shouldPostponeOnEnter = false
-            /** Start postponed transition after 300 ms no matter what - this prevents app from being paused for too long */
-            postponeEnterTransition(300, TimeUnit.MILLISECONDS)
-        } else{
-            startPostponedEnterTransition()
-        }
+        setupShouldPostpone()
 
         setupEvents()
 
@@ -87,6 +78,20 @@ abstract class BaseFragment<BaseEvent: CommonEvent>(@LayoutRes layoutRes: Int): 
         }
     }
 
+    private fun setupShouldPostpone() {
+        if(viewModel.shouldPostponeOnReturn) {
+            viewModel.shouldPostponeOnReturn = false
+            /** Start postponed transition after 300 ms no matter what - this prevents app from being paused for too long */
+            postponeEnterTransition(300, TimeUnit.MILLISECONDS)
+        } else if(viewModel.enterTransitionAlreadyPostponed && viewModel.shouldPostponeOnEnter) {
+            viewModel.shouldPostponeOnEnter = false
+            /** Start postponed transition after 300 ms no matter what - this prevents app from being paused for too long */
+            postponeEnterTransition(300, TimeUnit.MILLISECONDS)
+        } else{
+            startPostponedEnterTransition()
+        }
+    }
+
     open fun setupFragmentTransitions() {
         enterTransition = null
         exitTransition = null
@@ -95,7 +100,7 @@ abstract class BaseFragment<BaseEvent: CommonEvent>(@LayoutRes layoutRes: Int): 
     }
 
     /**
-     * Use this to get data from args and (when needed) pass it to vm
+     * Use this method to get the data from args and (when needed) pass it to vm
      */
     open fun getArgsData() = Unit
 
@@ -141,7 +146,7 @@ abstract class BaseFragment<BaseEvent: CommonEvent>(@LayoutRes layoutRes: Int): 
 
         ac()?.setLightStatusBarAppearance(isStatusBarLight)
 
-        ac()?.lastNavComponentActionId = null
+        ac()?.setLastNavComponentActionId(null)
 
         launchLifecycleScopeWhenStarted {
             if(viewModel.isProcessingData.value) {

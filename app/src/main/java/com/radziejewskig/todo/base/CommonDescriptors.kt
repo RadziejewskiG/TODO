@@ -9,6 +9,6 @@ open class CommonState: Parcelable
 
 interface CommonEvent
 
-class ShowMessage(
+class ShowMessageEvent(
     val messageData: MessageData
 )

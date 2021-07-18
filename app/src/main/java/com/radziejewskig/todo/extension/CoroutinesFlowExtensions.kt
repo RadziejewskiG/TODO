@@ -3,15 +3,12 @@ package com.radziejewskig.todo.extension
 import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.*
-import com.radziejewskig.todo.base.BaseViewModel.StateWrapper
 import com.radziejewskig.todo.base.CommonState
 import kotlinx.coroutines.*
 import kotlinx.coroutines.flow.*
 import kotlin.coroutines.CoroutineContext
 
-fun <T: CommonState> MutableLiveData<T>.toMutableStateFlow(): MutableStateFlow<StateWrapper<T>> = MutableStateFlow(StateWrapper(value!!))
-
-fun <T: CommonState> StateFlow<StateWrapper<T>>.v() = this.value.state
+fun <T: CommonState> MutableLiveData<T>.toMutableStateFlow(): MutableStateFlow<T> = MutableStateFlow(value!!)
 
 suspend fun <T> withMain(content: suspend CoroutineScope.() -> T) = withContext(Dispatchers.Main, content)
 suspend fun <T> withIo(content: suspend CoroutineScope.() -> T) = withContext(Dispatchers.IO, content)
@@ -27,14 +24,14 @@ fun <T> Flow<T>.collectLatestWhenStarted(
     }
 }
 
-fun <T: CommonState> StateFlow<StateWrapper<T>>.collectLatestStateWhenStartedAutoCancelling(
+fun <T> StateFlow<T>.collectLatestWhenStartedAutoCancelling(
     lifecycleOwner: LifecycleOwner,
     content: suspend CoroutineScope.(T) -> Unit
 ) {
     lifecycleOwner.lifecycleScope.launch {
         lifecycleOwner.lifecycle.repeatOnLifecycle(Lifecycle.State.STARTED) {
             collectLatest {
-                content(it.state)
+                content(it)
             }
         }
     }

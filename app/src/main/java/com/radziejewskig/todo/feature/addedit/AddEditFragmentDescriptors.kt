@@ -15,8 +15,9 @@ sealed class AddEditTaskSingleEvent: CommonEvent {
 
 @Parcelize
 data class AddEditFragmentState(
-    var task: Task = Task(),
-    var isEditing: Boolean = false
+    val task: Task = Task(),
+    val isEditing: Boolean = false,
+    val changeOccurred: Boolean = false,
 ): CommonState()
 
 @Parcelize

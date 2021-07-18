@@ -34,13 +34,13 @@ import com.radziejewskig.todo.utils.data.ReturnedTransitionData
 import com.radziejewskig.todo.utils.data.getMessageString
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 
-fun BaseFragment<*>.hideKeyboard() {
+fun BaseFragment<*, *>.hideKeyboard() {
     ac()?.hideKeyboard()
 }
 
-fun BaseFragment<*>.showKeyboard(view: View) = ac()?.showKeyboard(view)
+fun BaseFragment<*, *>.showKeyboard(view: View) = ac()?.showKeyboard(view)
 
-val BaseFragment<*>.viewLifecycleScope: LifecycleCoroutineScope
+val BaseFragment<*, *>.viewLifecycleScope: LifecycleCoroutineScope
     get() = viewLifecycleOwner.lifecycleScope
 
 fun <T> Fragment.getReturnedData(
@@ -74,7 +74,7 @@ fun <T> Fragment.popWithData(valueName: String, value: T) {
     findNavController().popBackStack()
 }
 
-fun BaseFragment<*>.navigateSafe(
+fun BaseFragment<*, *>.navigateSafe(
     @IdRes actionId: Int,
     args: Bundle? = null,
     navOptions: NavOptions? = null,
@@ -86,7 +86,7 @@ fun BaseFragment<*>.navigateSafe(
     } else false
 }
 
-private fun BaseFragment<*>.canNavigateSafe(
+private fun BaseFragment<*, *>.canNavigateSafe(
     @IdRes resId: Int,
     canNavigateTurnBackOnDelay: Long = 300
 ): Boolean {
@@ -97,12 +97,13 @@ private fun BaseFragment<*>.canNavigateSafe(
         if(canNavigateTurnBackOnDelay > 0) {
             ac()?.setCanNavigate(false, canNavigateTurnBackOnDelay)
         }
-        ac()?.lastNavComponentActionId = resId
+
+        ac()?.setLastNavComponentActionId(resId)
         true
     } else false
 }
 
-fun BaseFragment<*>.navigateSharedElements(
+fun BaseFragment<*, *>.navigateSharedElements(
     directions: NavDirections,
     transitionOnExit: Transition? = Fade().apply { duration = 250 },
     shouldPostponeOnReturn: Boolean = true,
@@ -131,7 +132,7 @@ fun BaseFragment<*>.navigateSharedElements(
     }
 }
 
-fun BaseFragment<*>.setupSharedElements(
+fun BaseFragment<*, *>.setupSharedElements(
     // THIS MUST BE android.transition AND NOT androidx.transition!!!
     transitionSet: TransitionSet,
     transitionOnReturn: Transition? = Fade().apply {
@@ -171,7 +172,7 @@ fun BaseFragment<*>.setupSharedElements(
 }
 
 @ExperimentalCoroutinesApi
-fun BaseFragment<*>.setupReturnedContinuousSharedElements(
+fun BaseFragment<*, *>.setupReturnedContinuousSharedElements(
     transitionOnReturn: Transition = Fade().apply { duration = 250 },
     dataReturned: (ReturnedTransitionData) -> Unit = {},
     onMapSharedElements: (ReturnedTransitionData, MutableList<String>, MutableMap<String, View>) -> Unit
@@ -202,7 +203,7 @@ fun BaseFragment<*>.setupReturnedContinuousSharedElements(
 }
 
 @ExperimentalCoroutinesApi
-fun BaseFragment<*>.popSharedElements(
+fun BaseFragment<*, *>.popSharedElements(
     value: String,
 ) {
     if(canNavigate()) {
@@ -217,7 +218,7 @@ fun BaseFragment<*>.popSharedElements(
     }
 }
 
-fun BaseFragment<*>.showMessage(messageData: MessageData) {
+fun BaseFragment<*, *>.showMessage(messageData: MessageData) {
 
     val context = requireContext()
 

@@ -20,7 +20,7 @@ import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableSharedFlow
-import kotlinx.coroutines.flow.SharedFlow
+import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.launch
 
@@ -34,7 +34,7 @@ class ListFragmentViewModel @AssistedInject constructor(
     interface Factory: AssistedSavedStateViewModelFactory<ListFragmentViewModel>
 
     private val _tasks = MutableSharedFlow<List<TaskListItemModel>>(replay = 1)
-    val tasks: SharedFlow<List<TaskListItemModel>> = _tasks
+    val tasks = _tasks.asSharedFlow()
 
     private var tasksJob: Job? = null
     private var justLoadingJob: Job? = null
@@ -44,70 +44,102 @@ class ListFragmentViewModel @AssistedInject constructor(
 
     private var currentLimit = 0
 
-    var previousList: List<Task> = listOf()
+    private var loadingNewPage: Boolean = false
 
     private var canTryLoadPage = true
 
-    var canShowEmptyImage = true
+    var loadingBarShowing: Boolean = false
+    private set
 
     var changedItemId: String? = null
+    private set
+
+    var canShowEmptyImage: Boolean = true
+    private set
+
+    var previousList: List<Task> = listOf()
 
     override fun initialAct() {
-        state.mutate {
-            loadingNewPage = false
-            isUpdating = false
-            loadingBarShowing = false
+        mutateState {
+            copy(
+                isUpdating = false
+            )
         }
-
         tryLoadNewPage(isInitial = true)
     }
 
+    private fun setIsUpdating(updating: Boolean) {
+        mutateState {
+            copy(
+                isUpdating = updating
+            )
+        }
+    }
+
+    private fun setIsLoadingBarShowing(isShowing: Boolean) {
+        loadingBarShowing = isShowing
+    }
+
+    private fun setIsLoadingNewPage(isLoading: Boolean) {
+        loadingNewPage = isLoading
+    }
+
+    private fun setCanTryLoadNewPage(canTry: Boolean) {
+        canTryLoadPage = canTry
+    }
+
+    fun resetChangedItemId() {
+        changedItemId = null
+    }
+
     fun changeTaskIsCompleted(task: Task) {
-        if(!stateValue().isUpdating) {
-            canTryLoadPage = false
+        if(!currentState.isUpdating) {
+            setCanTryLoadNewPage(false)
             changedItemId = task.id
             launchLoading (
                 content = {
                     taskRepository.changeTaskIsCompleted(task)
                     delay(100)
-                    canTryLoadPage = true
+                    setCanTryLoadNewPage(true)
                 },
                 onError = {
-                    changedItemId = null
-                    canTryLoadPage = true
+                    resetChangedItemId()
+                    setCanTryLoadNewPage(true)
                 }
             )
         }
     }
 
     fun deleteTask(task: Task) {
-        if(!stateValue().isUpdating) {
-            canTryLoadPage = false
+        if(!currentState.isUpdating) {
+            setCanTryLoadNewPage(false)
             launchLoading (
                 content = {
                     taskRepository.deleteTask(task)
                     delay(100)
-                    canTryLoadPage = true
+                    setCanTryLoadNewPage(true)
                 },
                 onError = {
-                    canTryLoadPage = true
+                    setCanTryLoadNewPage(true)
                 }
             )
         }
     }
 
+    fun setCanShowEmptyImage(canShow: Boolean) {
+        canShowEmptyImage = canShow
+    }
+
     fun refresh() {
-        if( (!stateValue().isUpdating && !stateValue().loadingNewPage) ||
-            (isDataFromCache && stateValue().loadingNewPage)
+        if( (!currentState.isUpdating && !loadingNewPage) ||
+            (isDataFromCache && loadingNewPage)
         ) {
             viewModelScope.launch {
-                canShowEmptyImage = false
+                setCanShowEmptyImage(false)
                 _tasks.emit(listOf())
-                if(isDataFromCache && stateValue().loadingNewPage) {
-                    state.mutate {
-                        loadingNewPage = false
-                        isUpdating = false
-                    }
+                if(isDataFromCache && loadingNewPage) {
+                    setIsLoadingNewPage(false)
+                    setIsUpdating(false)
                 }
                 currentLimit = 0
                 tryLoadNewPage(isInitial = true, showLoading = false)
@@ -116,24 +148,21 @@ class ListFragmentViewModel @AssistedInject constructor(
     }
 
     fun resetLoadingStates() {
-        state.mutate {
-            loadingNewPage = false
-            isUpdating = false
-        }
+        setIsLoadingNewPage(false)
+        setIsUpdating(false)
     }
 
     fun tryLoadNewPage(isInitial: Boolean = false, showLoading: Boolean = true) {
         if( canTryLoadPage &&
-            !stateValue().loadingNewPage &&
-            !stateValue().isUpdating
+            !loadingNewPage &&
+            !currentState.isUpdating
         ) {
-            state.mutate {
-                loadingNewPage = true
-                if(isInitial) {
-                    isUpdating = true
-                }
-                loadingBarShowing = true
+            setIsLoadingNewPage(true)
+
+            if(isInitial) {
+                setIsUpdating(true)
             }
+            setIsLoadingBarShowing(true)
 
             val cListSize = previousList.size
 
@@ -146,14 +175,12 @@ class ListFragmentViewModel @AssistedInject constructor(
                     }
                     delay(300)
 
-                    state.mutate { loadingBarShowing = false }
+                    setIsLoadingBarShowing(false)
 
                     _tasks.emit(oldList)
 
-                    state.mutate {
-                        loadingNewPage = false
-                        isUpdating = false
-                    }
+                    setIsLoadingNewPage(false)
+                    setIsUpdating(false)
                 }
             } else {
                 tasksJob?.cancel()
@@ -179,33 +206,31 @@ class ListFragmentViewModel @AssistedInject constructor(
                         isDataFromCache = isFromCache
 
                         if(taskList != null) {
-                            if((stateValue().loadingNewPage && !isFromCache) || !stateValue().loadingNewPage) {
+                            if((loadingNewPage && !isFromCache) || !loadingNewPage) {
                                 showNoInternetConnectionJob?.cancel()
                                 justLoadingJob?.cancel()
 
-                                state.mutate { loadingBarShowing = false }
+                                setIsLoadingBarShowing(false)
 
                                 val currentListSize = oldList.size
 
-                                if(stateValue().loadingNewPage) {
+                                if(loadingNewPage) {
                                     if(taskList.size < currentListSize && !isInitial) {
                                         currentLimit -= PAGE_SIZE
                                     }
                                 } else {
-                                    state.mutate { isUpdating = true }
+                                    setIsUpdating(true)
                                 }
 
                                 _tasks.emit(taskList.map { TaskListItemModel.TaskItem(it) })
 
                                 if(taskList sameContentAs previousList) {
-                                    state.mutate {
-                                        loadingNewPage = false
-                                        isUpdating = false
-                                    }
+                                    setIsLoadingNewPage(false)
+                                    setIsUpdating(false)
                                 }
                                 previousList = taskList
                             } else {
-                                if (stateValue().loadingNewPage && isFromCache) {
+                                if (loadingNewPage && isFromCache) {
                                     showNoInternetConnectionJob?.cancel()
                                     showNoInternetConnectionJob = viewModelScope.launch {
                                         delay(2000)
@@ -220,7 +245,7 @@ class ListFragmentViewModel @AssistedInject constructor(
                             }
 
                         } else {
-                            if(stateValue().loadingNewPage) {
+                            if(loadingNewPage) {
                                 showMessage(
                                     MessageData(
                                         MessageType.ERROR,

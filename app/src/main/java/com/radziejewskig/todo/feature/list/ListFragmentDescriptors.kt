@@ -5,7 +5,5 @@ import kotlinx.parcelize.Parcelize
 
 @Parcelize
 data class ListFragmentState(
-    var isUpdating: Boolean = false,
-    var loadingNewPage: Boolean = false,
-    var loadingBarShowing: Boolean = false
+    val isUpdating: Boolean = false
 ): CommonState()

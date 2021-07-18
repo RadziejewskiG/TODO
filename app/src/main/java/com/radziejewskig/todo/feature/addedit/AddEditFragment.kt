@@ -3,7 +3,7 @@ package com.radziejewskig.todo.feature.addedit
 import android.os.Bundle
 import android.view.View
 import androidx.core.view.updatePadding
-import androidx.core.widget.addTextChangedListener
+import androidx.core.widget.doAfterTextChanged
 import androidx.fragment.app.viewModels
 import androidx.navigation.fragment.findNavController
 import androidx.navigation.fragment.navArgs
@@ -17,9 +17,10 @@ import com.radziejewskig.todo.utils.viewBinding
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay
+import java.util.concurrent.atomic.AtomicBoolean
 
 @ExperimentalCoroutinesApi
-class AddEditFragment: BaseFragment<AddEditTaskSingleEvent>(R.layout.fragment_add_edit) {
+class AddEditFragment: BaseFragment<AddEditFragmentState, AddEditTaskSingleEvent>(R.layout.fragment_add_edit) {
 
     override val binding by viewBinding(FragmentAddEditBinding::bind)
 
@@ -33,6 +34,8 @@ class AddEditFragment: BaseFragment<AddEditTaskSingleEvent>(R.layout.fragment_ad
 
     private var iconUrlDebounceJob: Job? = null
 
+    private var fragmentInitialized = AtomicBoolean(false)
+
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         binding.run {
@@ -41,16 +44,16 @@ class AddEditFragment: BaseFragment<AddEditTaskSingleEvent>(R.layout.fragment_ad
                 hideKeyboard()
             }
 
-            if(!viewModel.stateValue().isEditing && !viewModel.changeOccurred.value) {
+            if(!currentState.isEditing && !currentState.changeOccurred) {
                 etTitle.requestFocus()
                 showKeyboard(etTitle)
             }
 
-            etTitle.addTextChangedListener {
+            etTitle.doAfterTextChanged {
                 viewModel.titleChanged(it?.toString() ?: "")
             }
 
-            etIcon.addTextChangedListener {
+            etIcon.doAfterTextChanged {
                 val text = if(it == null || it.isEmpty()) null else it.toString()
                 iconUrlDebounceJob?.cancel()
                 iconUrlDebounceJob = launchLifecycleScopeWhenStarted {
@@ -59,7 +62,7 @@ class AddEditFragment: BaseFragment<AddEditTaskSingleEvent>(R.layout.fragment_ad
                 }
             }
 
-            etDescription.addTextChangedListener {
+            etDescription.doAfterTextChanged {
                 val text = if(it == null || it.isEmpty()) null else it.toString()
                 viewModel.descriptionChanged(text)
             }
@@ -83,16 +86,19 @@ class AddEditFragment: BaseFragment<AddEditTaskSingleEvent>(R.layout.fragment_ad
             }
         }
 
-        viewModel.state.collectLatestStateWhenStartedAutoCancelling(viewLifecycleOwner) { state ->
+        viewModel.state.collectLatestWhenStartedAutoCancelling(viewLifecycleOwner) { state ->
             val task = state.task
             binding.run {
+                btnSave.isEnabled = state.changeOccurred
                 container.transitionName = getTaskEditSharedElementName(task)
 
                 titleTv.text = getString(if(state.isEditing) R.string.edit_task else R.string.add_task)
 
-                etTitle.setTextIfDiffers(task.title)
-                etIcon.setTextIfDiffers(task.iconUrl)
-                etDescription.setTextIfDiffers(task.description)
+                if (fragmentInitialized.compareAndSet(false, true)) {
+                    etTitle.setTextIfDiffers(task.title)
+                    etIcon.setTextIfDiffers(task.iconUrl)
+                    etDescription.setTextIfDiffers(task.description)
+                }
 
                 taskIcon.loadImage(
                     context = requireContext(),
@@ -105,10 +111,6 @@ class AddEditFragment: BaseFragment<AddEditTaskSingleEvent>(R.layout.fragment_ad
                 tilDescription.error = null
                 tilIcon.error = null
             }
-        }
-
-        viewModel.changeOccurred.collectLatestWhenStarted(viewLifecycleScope) { changeOccurred ->
-            binding.btnSave.isEnabled = changeOccurred
         }
     }
 
@@ -154,7 +156,7 @@ class AddEditFragment: BaseFragment<AddEditTaskSingleEvent>(R.layout.fragment_ad
 
     private fun navigateBack() {
         hideKeyboard()
-        if(viewModel.stateValue().isEditing) {
+        if(currentState.isEditing) {
             popSharedElements()
         } else {
             findNavController().popBackStack()
@@ -162,7 +164,7 @@ class AddEditFragment: BaseFragment<AddEditTaskSingleEvent>(R.layout.fragment_ad
     }
 
     override fun onBackPressed(): Boolean {
-        if(viewModel.changeOccurred.value) {
+        if(currentState.changeOccurred) {
             showChangeOccurredDialog()
         } else {
             navigateBack()
@@ -171,7 +173,7 @@ class AddEditFragment: BaseFragment<AddEditTaskSingleEvent>(R.layout.fragment_ad
     }
 
     private fun popSharedElements() {
-        val id = viewModel.stateValue().task.id
+        val id = currentState.task.id
         popSharedElements(id)
     }
 

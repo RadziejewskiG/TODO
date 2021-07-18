@@ -14,7 +14,6 @@ import dagger.assisted.AssistedFactory
 import dagger.assisted.AssistedInject
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.delay
-import kotlinx.coroutines.flow.MutableStateFlow
 
 @ExperimentalCoroutinesApi
 class AddEditFragmentViewModel @AssistedInject constructor(
@@ -23,62 +22,62 @@ class AddEditFragmentViewModel @AssistedInject constructor(
 ): FragmentViewModel<AddEditFragmentState, AddEditTaskSingleEvent>(handle) {
 
     @AssistedFactory
-    interface Factory : AssistedSavedStateViewModelFactory<AddEditFragmentViewModel>
-
-    val changeOccurred = MutableStateFlow(handle.get("changeOccurred") ?: false)
+    interface Factory: AssistedSavedStateViewModelFactory<AddEditFragmentViewModel>
 
     fun setup(t: Task?) = setArgsPassed {
         val editing = t != null
-        state.mutate {
-            task = t ?: Task()
-            isEditing = editing
+        mutateState {
+            copy(
+                task = t ?: Task(),
+                isEditing = editing
+            )
         }
     }
 
     fun titleChanged(newTitle: String) {
-        if(newTitle != stateValue().task.title) {
-            setChangeOccurred()
-            state.mutate {
-                task = task.apply {
-                    title = newTitle
-                }
+        if(newTitle != currentState.task.title) {
+            mutateState {
+                copy(
+                    changeOccurred = true,
+                    task = task.apply {
+                        title = newTitle
+                    }
+                )
             }
         }
     }
 
     fun iconUrlChanged(newUrl: String?) {
-        if(newUrl != stateValue().task.iconUrl) {
-            setChangeOccurred()
-            state.mutate {
-                task = task.apply {
-                    iconUrl = newUrl
-                }
+        if(newUrl != currentState.task.iconUrl) {
+            mutateState {
+                copy(
+                    changeOccurred = true,
+                    task = task.apply {
+                        iconUrl = newUrl
+                    }
+                )
             }
         }
     }
 
     fun descriptionChanged(newDescription: String?) {
-        if(newDescription != stateValue().task.description) {
-            setChangeOccurred()
-            state.mutate {
-                task = task.apply {
-                    description = newDescription
-                }
+        if(newDescription != currentState.task.description) {
+            mutateState {
+                copy(
+                    changeOccurred = true,
+                    task = task.apply {
+                        description = newDescription
+                    }
+                )
             }
         }
     }
 
-    private fun setChangeOccurred() {
-        if(!changeOccurred.value) {
-            changeOccurred.value = true
-        }
-    }
-
     fun addEditTask() {
-        val task = stateValue().task
+        val task = currentState.task
         if(ValidationUtil.checkTaskValid(task)) {
             launchLoading {
-                if(stateValue().isEditing) {
+                if(currentState.isEditing) {
                     taskRepository.editTask(task)
                 } else {
                     taskRepository.addTask(task)
@@ -101,11 +100,6 @@ class AddEditFragmentViewModel @AssistedInject constructor(
             showDescriptionTooLongError = (task.description?.apply { trimNormalize() }?.length ?: 0) > DESCRIPTION_MAX_LENGTH
         )
         AddEditTaskSingleEvent.ShowErrors(errorsData).emit()
-    }
-
-    override fun saveToBundle() {
-        super.saveToBundle()
-        handle.set("changeOccurred", changeOccurred.value)
     }
 
 }

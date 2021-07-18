@@ -6,26 +6,29 @@ import androidx.lifecycle.ViewModel
 import com.radziejewskig.todo.extension.toMutableStateFlow
 import com.radziejewskig.todo.utils.CommonViewHelper
 import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.asStateFlow
 import java.util.concurrent.atomic.AtomicBoolean
 
-abstract class BaseViewModel<BaseState: CommonState>(private val savedStateHandle: SavedStateHandle): ViewModel() {
+abstract class BaseViewModel<State: CommonState>(private val savedStateHandle: SavedStateHandle): ViewModel() {
 
-    protected val _state by lazy { savedStateHandle.getLiveData(STATE_BUNDLE_TAG, getStateClassFromType().newInstance()).toMutableStateFlow() }
-    val state: StateFlow<StateWrapper<BaseState>> = _state
+    private fun getStateClassFromType() = CommonViewHelper.getTypeArgument(
+        javaClass,
+        CommonState::class.java
+    ) as Class<State>
 
-    fun stateValue() = state.value.state
+    private val _state by lazy { savedStateHandle.getLiveData(STATE_BUNDLE_TAG, getStateClassFromType().newInstance()).toMutableStateFlow() }
+    val state = _state.asStateFlow()
 
-    val StateFlow<StateWrapper<BaseState>>.current
-        get() = this.value.state
+    val currentState: State = _state.value
 
     private val isInitialized = AtomicBoolean(false)
 
     // Indicator for loading dialog
-    val isProcessingData = MutableStateFlow(false)
+    private val _isProcessingData = MutableStateFlow(false)
+    val isProcessingData = _isProcessingData.asStateFlow()
 
     fun setIsProcessingData(isProcessing: Boolean) {
-        isProcessingData.value = isProcessing
+        _isProcessingData.value = isProcessing
     }
 
     @CallSuper
@@ -40,22 +43,14 @@ abstract class BaseViewModel<BaseState: CommonState>(private val savedStateHandl
     @CallSuper
     open fun saveToBundle() {
         // Data must be saved to state because it will only update itself in the state if new content is assigned to it's .value. It will ignore it's content changes.
-        savedStateHandle.set(STATE_BUNDLE_TAG, state.current)
+        savedStateHandle.set(STATE_BUNDLE_TAG, currentState)
     }
 
-    private fun getStateClassFromType() = CommonViewHelper.getTypeArgument(
-        javaClass,
-        CommonState::class.java
-    ) as Class<BaseState>
-
-    protected fun StateFlow<StateWrapper<BaseState>>.mutate(mutation: BaseState.() -> Unit) {
-        val currentState = _state.value.state
-        mutation(currentState)
-        val newStateWrapped = StateWrapper(currentState)
-        _state.value = newStateWrapped
+    protected fun mutateState(mutation: State.() -> State) {
+        val newState = currentState.mutation()
+        _state.value = newState
     }
 
-    class StateWrapper<BaseState: CommonState>(var state: BaseState)
 }
 
 private const val STATE_BUNDLE_TAG: String = "viewModelState"

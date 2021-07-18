@@ -41,28 +41,32 @@ abstract class BaseActivity: AppCompatActivity(), HasDefaultViewModelProviderFac
     open fun windowInsetsChanged(navigationBarHeight: Int, statusBarHeight: Int) = Unit
 
     var isKeyboardOpened = false
+    private set
 
     var lastNavComponentActionId: Int? = null
+    private set
 
     fun canNavigate(): Boolean = viewModel.canNavigate.value
-    fun canNavigateFlow() = viewModel.canNavigate
 
     private var enableBackPressJob: Job? = null
 
+    fun setLastNavComponentActionId(id: Int?) {
+        lastNavComponentActionId = id
+    }
+
     fun setCanNavigate(canNavigate: Boolean, delayToTurnBackOn: Long = 1000) {
         enableBackPressJob?.cancel()
-        viewModel.canNavigate.value = canNavigate
+        viewModel.setCanNavigate(canNavigate)
         if(!canNavigate) {
             enableBackPressJob = launchLifecycleScopeWhenStarted {
                 delay(delayToTurnBackOn)
-                viewModel.canNavigate.value = true
+                viewModel.setCanNavigate(true)
             }
         }
     }
 
     @CallSuper
     override fun onCreate(savedInstanceState: Bundle?) {
-
         val theme = themeToOverride()
         if(theme > 0) {
             setTheme(theme)
@@ -75,14 +79,30 @@ abstract class BaseActivity: AppCompatActivity(), HasDefaultViewModelProviderFac
 
         setContentView(binding.root)
 
-        viewModel.canNavigate.value = true
+        viewModel.setCanNavigate(true)
 
+        setupBackPressDispatcher()
+
+        viewModel.isStatusBarLight.collectLatestWhenStarted(lifecycleScope) { isLight ->
+            WindowInsetsControllerCompat(window, window.decorView).isAppearanceLightStatusBars = isLight
+        }
+
+        window.addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON)
+
+        viewModel.start()
+
+        setupWindowInsetsListener()
+
+        WindowCompat.setDecorFitsSystemWindows(window, false)
+    }
+
+    private fun setupBackPressDispatcher() {
         onBackPressedDispatcher.addCallback(this) {
             if(canNavigate()) {
                 val fragmentHandlesBack = try {
                     val currentFragment = supportFragmentManager.findFragmentById(R.id.mainNavHostFragment)?.childFragmentManager?.fragments?.get(0)
                     try {
-                        (currentFragment as BaseFragment<*>?)?.onBackPressed() ?: false
+                        (currentFragment as BaseFragment<*, *>?)?.onBackPressed() ?: false
                     } catch (e: Exception) {
                         false
                     }
@@ -105,15 +125,9 @@ abstract class BaseActivity: AppCompatActivity(), HasDefaultViewModelProviderFac
                 }
             }
         }
+    }
 
-        viewModel.isStatusBarLight.collectLatestWhenStarted(lifecycleScope) { isLight ->
-            WindowInsetsControllerCompat(window, window.decorView).isAppearanceLightStatusBars = isLight
-        }
-
-        window.addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON)
-
-        viewModel.start()
-
+    private fun setupWindowInsetsListener() {
         ViewCompat.setOnApplyWindowInsetsListener(binding.root, OnApplyWindowInsetsListener { v, insets ->
             val navigationBarHeight: Int =
                 insets?.getInsets(WindowInsetsCompat.Type.systemBars())?.bottom ?: 0
@@ -127,7 +141,6 @@ abstract class BaseActivity: AppCompatActivity(), HasDefaultViewModelProviderFac
 
             return@OnApplyWindowInsetsListener insets
         })
-        WindowCompat.setDecorFitsSystemWindows(window, false)
     }
 
     open fun onBackPress(): Boolean = false
@@ -146,9 +159,9 @@ abstract class BaseActivity: AppCompatActivity(), HasDefaultViewModelProviderFac
     }
 
     override fun onDestroy() {
-        super.onDestroy()
         enableBackPressJob?.cancel()
         enableBackPressJob = null
+        super.onDestroy()
     }
 
 }
