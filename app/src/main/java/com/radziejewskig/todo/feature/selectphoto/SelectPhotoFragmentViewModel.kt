@@ -19,11 +19,13 @@ class SelectPhotoFragmentViewModel @AssistedInject constructor(
     @Assisted private val handle: SavedStateHandle
 ): FragmentViewModel<CommonState, CommonEvent>(handle) {
 
-    private val _photos = MutableSharedFlow<List<String>>(replay = 1)
-    val photos = _photos.asSharedFlow()
-
     @AssistedFactory
     interface Factory: AssistedSavedStateViewModelFactory<SelectPhotoFragmentViewModel>
+
+    override fun setupInitialState() = CommonState()
+
+    private val _photos = MutableSharedFlow<List<String>>(replay = 1)
+    val photos = _photos.asSharedFlow()
 
     override fun initialAct() {
         loadImages()

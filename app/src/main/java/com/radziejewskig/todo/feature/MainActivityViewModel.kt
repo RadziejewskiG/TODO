@@ -13,6 +13,8 @@ class MainActivityViewModel @AssistedInject constructor (
     @Assisted private val handle: SavedStateHandle
 ): ActivityViewModel<CommonState>(handle) {
 
+    override fun setupInitialState() = CommonState()
+
     @AssistedFactory
     interface Factory: AssistedSavedStateViewModelFactory<MainActivityViewModel>
 

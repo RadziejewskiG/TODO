@@ -47,7 +47,7 @@ abstract class BaseFragment<BaseState: CommonState, BaseEvent: CommonEvent>(@Lay
 
     open val isStatusBarLight: Boolean = true
 
-    protected val currentState: BaseState by lazy { viewModel.currentState }
+    protected fun currentState(): BaseState = viewModel.currentState()
 
     @CallSuper
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {

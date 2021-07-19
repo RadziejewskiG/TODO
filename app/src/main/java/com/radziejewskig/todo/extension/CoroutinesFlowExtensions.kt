@@ -3,12 +3,9 @@ package com.radziejewskig.todo.extension
 import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.*
-import com.radziejewskig.todo.base.CommonState
 import kotlinx.coroutines.*
 import kotlinx.coroutines.flow.*
 import kotlin.coroutines.CoroutineContext
-
-fun <T: CommonState> MutableLiveData<T>.toMutableStateFlow(): MutableStateFlow<T> = MutableStateFlow(value!!)
 
 suspend fun <T> withMain(content: suspend CoroutineScope.() -> T) = withContext(Dispatchers.Main, content)
 suspend fun <T> withIo(content: suspend CoroutineScope.() -> T) = withContext(Dispatchers.IO, content)

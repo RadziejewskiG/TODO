@@ -3,23 +3,20 @@ package com.radziejewskig.todo.base
 import androidx.annotation.CallSuper
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
-import com.radziejewskig.todo.extension.toMutableStateFlow
-import com.radziejewskig.todo.utils.CommonViewHelper
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import java.util.concurrent.atomic.AtomicBoolean
 
 abstract class BaseViewModel<State: CommonState>(private val savedStateHandle: SavedStateHandle): ViewModel() {
 
-    private fun getStateClassFromType() = CommonViewHelper.getTypeArgument(
-        javaClass,
-        CommonState::class.java
-    ) as Class<State>
+    private val initialState: State by lazy { setupInitialState() }
+    protected abstract fun setupInitialState(): State
 
-    private val _state by lazy { savedStateHandle.getLiveData(STATE_BUNDLE_TAG, getStateClassFromType().newInstance()).toMutableStateFlow() }
+    private var _state = MutableStateFlow(savedStateHandle.get<State>(STATE_BUNDLE_TAG) ?: initialState)
+
     val state = _state.asStateFlow()
 
-    val currentState: State = _state.value
+    fun currentState(): State = state.value
 
     private val isInitialized = AtomicBoolean(false)
 
@@ -43,11 +40,11 @@ abstract class BaseViewModel<State: CommonState>(private val savedStateHandle: S
     @CallSuper
     open fun saveToBundle() {
         // Data must be saved to state because it will only update itself in the state if new content is assigned to it's .value. It will ignore it's content changes.
-        savedStateHandle.set(STATE_BUNDLE_TAG, currentState)
+        savedStateHandle.set(STATE_BUNDLE_TAG, currentState())
     }
 
     protected fun mutateState(mutation: State.() -> State) {
-        val newState = currentState.mutation()
+        val newState = currentState().mutation()
         _state.value = newState
     }
 

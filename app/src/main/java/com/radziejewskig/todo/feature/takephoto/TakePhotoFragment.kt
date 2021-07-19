@@ -98,8 +98,8 @@ class TakePhotoFragment: BaseFragment<TakePhotoState, TakePhotoEvent>(R.layout.f
 
     private fun tryGetBitmapAndAttachToImv() = launchLifecycleScopeWhenStarted {
         withIo {
-            BitmapFactory.decodeFile(currentState.currentPhotoPath)?.also { bitmap ->
-                val exif = ExifInterface(currentState.currentPhotoPath)
+            BitmapFactory.decodeFile(currentState().currentPhotoPath)?.also { bitmap ->
+                val exif = ExifInterface(currentState().currentPhotoPath)
                 withMain {
                     attachNewBitmapToImv(bitmap, exif)
                 }

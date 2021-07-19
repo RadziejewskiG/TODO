@@ -19,6 +19,8 @@ class TakePhotoFragmentViewModel @AssistedInject constructor(
     @AssistedFactory
     interface Factory: AssistedSavedStateViewModelFactory<TakePhotoFragmentViewModel>
 
+    override fun setupInitialState() = TakePhotoState()
+
     fun assignNewPhotoPath(photoPath: String) {
         mutateState {
             copy(

@@ -17,7 +17,6 @@ import com.radziejewskig.todo.utils.viewBinding
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay
-import java.util.concurrent.atomic.AtomicBoolean
 
 @ExperimentalCoroutinesApi
 class AddEditFragment: BaseFragment<AddEditFragmentState, AddEditTaskSingleEvent>(R.layout.fragment_add_edit) {
@@ -34,8 +33,6 @@ class AddEditFragment: BaseFragment<AddEditFragmentState, AddEditTaskSingleEvent
 
     private var iconUrlDebounceJob: Job? = null
 
-    private var fragmentInitialized = AtomicBoolean(false)
-
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         binding.run {
@@ -44,7 +41,7 @@ class AddEditFragment: BaseFragment<AddEditFragmentState, AddEditTaskSingleEvent
                 hideKeyboard()
             }
 
-            if(!currentState.isEditing && !currentState.changeOccurred) {
+            if(!currentState().isEditing && !currentState().changeOccurred) {
                 etTitle.requestFocus()
                 showKeyboard(etTitle)
             }
@@ -94,11 +91,9 @@ class AddEditFragment: BaseFragment<AddEditFragmentState, AddEditTaskSingleEvent
 
                 titleTv.text = getString(if(state.isEditing) R.string.edit_task else R.string.add_task)
 
-                if (fragmentInitialized.compareAndSet(false, true)) {
-                    etTitle.setTextIfDiffers(task.title)
-                    etIcon.setTextIfDiffers(task.iconUrl)
-                    etDescription.setTextIfDiffers(task.description)
-                }
+                etTitle.setTextIfDiffers(task.title)
+                etIcon.setTextIfDiffers(task.iconUrl)
+                etDescription.setTextIfDiffers(task.description)
 
                 taskIcon.loadImage(
                     context = requireContext(),
@@ -156,7 +151,7 @@ class AddEditFragment: BaseFragment<AddEditFragmentState, AddEditTaskSingleEvent
 
     private fun navigateBack() {
         hideKeyboard()
-        if(currentState.isEditing) {
+        if(currentState().isEditing) {
             popSharedElements()
         } else {
             findNavController().popBackStack()
@@ -164,7 +159,7 @@ class AddEditFragment: BaseFragment<AddEditFragmentState, AddEditTaskSingleEvent
     }
 
     override fun onBackPressed(): Boolean {
-        if(currentState.changeOccurred) {
+        if(currentState().changeOccurred) {
             showChangeOccurredDialog()
         } else {
             navigateBack()
@@ -173,7 +168,7 @@ class AddEditFragment: BaseFragment<AddEditFragmentState, AddEditTaskSingleEvent
     }
 
     private fun popSharedElements() {
-        val id = currentState.task.id
+        val id = currentState().task.id
         popSharedElements(id)
     }
 

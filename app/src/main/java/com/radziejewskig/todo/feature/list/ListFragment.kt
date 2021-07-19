@@ -121,7 +121,7 @@ class ListFragment: BaseFragment<ListFragmentState, CommonEvent>(R.layout.fragme
     }
 
     private fun itemLongClicked(task: Task) {
-        if(!currentState.isUpdating) {
+        if(!currentState().isUpdating) {
             dialogDepository()?.showInfoDialog(
                 title = getString(R.string.deleting_task_title),
                 message = getString(R.string.deleting_task_message, task.title),
@@ -138,7 +138,7 @@ class ListFragment: BaseFragment<ListFragmentState, CommonEvent>(R.layout.fragme
     }
 
     private fun itemClicked(task: Task, view: View) {
-        if(!currentState.isUpdating) {
+        if(!currentState().isUpdating) {
             navigateSharedElements(
                 directions = ListFragmentDirections.actionListToAddeditNoAnim(task.copy()),
                 transitionNamesWithViews = listOf(view.transitionName to view)
@@ -173,7 +173,7 @@ class ListFragment: BaseFragment<ListFragmentState, CommonEvent>(R.layout.fragme
     }
 
     private fun fabClicked() {
-        if(!currentState.isUpdating) {
+        if(!currentState().isUpdating) {
             binding.rv.stopScroll()
             navigateSafe(
                 R.id.action_listFragment_to_addEditFragment,

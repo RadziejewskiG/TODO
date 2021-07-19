@@ -33,6 +33,8 @@ class ListFragmentViewModel @AssistedInject constructor(
     @AssistedFactory
     interface Factory: AssistedSavedStateViewModelFactory<ListFragmentViewModel>
 
+    override fun setupInitialState() = ListFragmentState()
+
     private val _tasks = MutableSharedFlow<List<TaskListItemModel>>(replay = 1)
     val tasks = _tasks.asSharedFlow()
 
@@ -93,7 +95,7 @@ class ListFragmentViewModel @AssistedInject constructor(
     }
 
     fun changeTaskIsCompleted(task: Task) {
-        if(!currentState.isUpdating) {
+        if(!currentState().isUpdating) {
             setCanTryLoadNewPage(false)
             changedItemId = task.id
             launchLoading (
@@ -111,7 +113,7 @@ class ListFragmentViewModel @AssistedInject constructor(
     }
 
     fun deleteTask(task: Task) {
-        if(!currentState.isUpdating) {
+        if(!currentState().isUpdating) {
             setCanTryLoadNewPage(false)
             launchLoading (
                 content = {
@@ -131,7 +133,7 @@ class ListFragmentViewModel @AssistedInject constructor(
     }
 
     fun refresh() {
-        if( (!currentState.isUpdating && !loadingNewPage) ||
+        if( (!currentState().isUpdating && !loadingNewPage) ||
             (isDataFromCache && loadingNewPage)
         ) {
             viewModelScope.launch {
@@ -155,7 +157,7 @@ class ListFragmentViewModel @AssistedInject constructor(
     fun tryLoadNewPage(isInitial: Boolean = false, showLoading: Boolean = true) {
         if( canTryLoadPage &&
             !loadingNewPage &&
-            !currentState.isUpdating
+            !currentState().isUpdating
         ) {
             setIsLoadingNewPage(true)
 

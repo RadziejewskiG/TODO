@@ -24,60 +24,63 @@ class AddEditFragmentViewModel @AssistedInject constructor(
     @AssistedFactory
     interface Factory: AssistedSavedStateViewModelFactory<AddEditFragmentViewModel>
 
+    override fun setupInitialState() = AddEditFragmentState()
+
     fun setup(t: Task?) = setArgsPassed {
-        val editing = t != null
-        mutateState {
-            copy(
-                task = t ?: Task(),
-                isEditing = editing
-            )
+        if(t!= null) {
+            mutateState {
+                copy(
+                    task = t,
+                    isEditing = true
+                )
+            }
         }
     }
 
     fun titleChanged(newTitle: String) {
-        if(newTitle != currentState.task.title) {
+        if(newTitle != currentState().task.title) {
             mutateState {
                 copy(
                     changeOccurred = true,
-                    task = task.apply {
+                    task = task.copy(
                         title = newTitle
-                    }
+                    )
                 )
             }
         }
     }
 
     fun iconUrlChanged(newUrl: String?) {
-        if(newUrl != currentState.task.iconUrl) {
+        if(newUrl != currentState().task.iconUrl) {
             mutateState {
                 copy(
                     changeOccurred = true,
-                    task = task.apply {
+                    task = task.copy(
                         iconUrl = newUrl
-                    }
+                    )
                 )
             }
         }
     }
 
     fun descriptionChanged(newDescription: String?) {
-        if(newDescription != currentState.task.description) {
+        if(newDescription != currentState().task.description) {
             mutateState {
                 copy(
                     changeOccurred = true,
-                    task = task.apply {
+                    task = task.copy(
                         description = newDescription
-                    }
+                    )
                 )
             }
         }
     }
 
     fun addEditTask() {
-        val task = currentState.task
+        val task = currentState().task
         if(ValidationUtil.checkTaskValid(task)) {
             launchLoading {
-                if(currentState.isEditing) {
+                if(currentState().isEditing) {
                     taskRepository.editTask(task)
                 } else {
                     taskRepository.addTask(task)
