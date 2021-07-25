@@ -1,9 +1,6 @@
 package com.radziejewskig.todo.di.components
 
 import android.app.Application
-import android.content.Context
-import com.google.firebase.firestore.FirebaseFirestore
-import com.google.firebase.storage.FirebaseStorage
 import com.radziejewskig.todo.App
 import com.radziejewskig.todo.di.modules.*
 import com.radziejewskig.todo.feature.MainActivity
@@ -33,13 +30,6 @@ interface ApplicationComponent {
             application: Application
         ): ApplicationComponent
     }
-
-    val context: Context
-    val application: Application
-
-    val firebaseFirestore: FirebaseFirestore
-
-    val firebaseStorage: FirebaseStorage
 
     //App
     fun inject(app: App)
